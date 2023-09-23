@@ -1,0 +1,39 @@
+﻿<modal click-off-closes='true' move-to-center='true' show-event='ShowProfile' size-delta-x='100' size-delta-y='60'>
+    <vertical bg='round-rect-panel' child-control-height='true' pad-top='5' pad-left='5' pad-bottom='5' pad-right='5' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+        <horizontal id='HeaderSection' pref-width='100' pref-height='30'>
+            <vertical pref-width='20' vertical-fit='PreferredSize'>
+                <avatar id='Avatar' pref-width='20' pref-height='20' />
+            </vertical>
+            <vertical pref-width='35' vertical-fit='PreferredSize' pad-left='2' pad-right='2'>
+                <horizontal pref-height='7' vertical-fit='PreferredSize'>
+                    <text id='Name' font-size='6' />
+                </horizontal>
+                <horizontal pref-height='7' vertical-fit='PreferredSize'>
+                    <text id='Status' font-size='5' />
+                </horizontal>
+            </vertical>
+            <vertical pref-width='30' vertical-fit='PreferredSize'>
+                <button id='FirstButton' on-click='FirstButtonClicked' pref-width='30' pref-height='10'/>
+                <button id='SecondButton' on-click='SecondButtonClicked' pref-width='30' pref-height='10'/>
+                <button id='ThirdButton' on-click='ThirdButtonClicked' pref-width='30' pref-height='10'/>
+            </vertical>
+        </horizontal>
+        <horizontal id='MapSection' pref-width='100' pref-height='30'>
+            <vertical pref-width='100' pref-height='30'>
+                <horizontal pref-width='100' pref-height='30'>
+                    <vertical pref-width='25' pref-height='30'>
+                        <image id='MapCover' pref-width='25' pref-height='25' preserve-aspect='true'/>
+                    </vertical>
+                    <vertical pref-width='75' pref-height='25' pad-left='2' pad-right='2'>
+                        <text id='MapName' />
+                        <text id='MapDetails' />
+                        <text id='MapRankedInfo' />
+                        <text id='MapPlayerState' />
+                    </vertical>
+                </horizontal>
+            </vertical>
+        </horizontal>
+        <!-- TODO: Add Leaderboard -->
+        <!--<horizontal id='LeaderboardSection'></horizontal>-->
+    </vertical>
+</modal>

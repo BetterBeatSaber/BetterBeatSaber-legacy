@@ -1,0 +1,91 @@
+﻿name: Build
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+    paths-ignore:
+      - Server/**
+      - .github/workflows/build-server.yml
+
+jobs: 
+  build:
+    runs-on: windows-latest
+    env:
+      BeatSaberDirectory: ${{ github.workspace }}/Refs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.6.0
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.3.1
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.2.0
+      - name: Navigate to Workspace
+        run: cd ${{ github.workspace }}
+      - name: Cache
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - name: Restore Packages
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: nuget restore BetterBeatSaber.sln
+      - name: Initialize Environment
+        uses: beat-forge/init-beatsaber@v1.1.0
+        with:
+          token: ${{ github.token }}
+          version: 1.29.1
+      - name: Download Dependencies
+        uses: Goobwabber/download-beatmods-deps@1.2
+        with:
+          manifest: ${{ github.workspace }}/Core/manifest.json
+          path: ${{ github.workspace }}/Refs
+      - name: Download ReeSabers
+        run: "curl -H 'Authorization: token ${{ secrets.GH_TOKEN }}' -o ${{ github.workspace }}/Refs/Plugins/ReeSabers.dll ${{ secrets.REESABERS }}"
+      - name: Build Loader
+        run: dotnet build -c Release Loader/Loader.csproj
+      - name: Build Core
+        run: dotnet build -c Release Core/Core.csproj
+      - name: Build Colorizer.Game
+        run: dotnet build -c Release Colorizer.Game/Colorizer.Game.csproj
+      - name: Build Colorizer.UI
+        run: dotnet build -c Release Colorizer.UI/Colorizer.UI.csproj
+      - name: Build DarkEnvironment
+        run: dotnet build -c Release DarkEnvironment/DarkEnvironment.csproj
+      - name: Build MissTexts
+        run: dotnet build -c Release MissTexts/MissTexts.csproj
+      - name: Build ReeSabersColorizer
+        run: dotnet build -c Release ReeSabersColorizer/ReeSabersColorizer.csproj
+      - name: Build SmoothedControllers
+        run: dotnet build -c Release SmoothedControllers/SmoothedControllers.csproj
+      - name: Build Tweaks
+        run: dotnet build -c Release Tweaks/Tweaks.csproj
+      - name: Upload Artefacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Better Beat Saber
+          path: |
+            ${{ github.workspace }}/Loader/bin/BetterBeatSaber.Loader.dll
+            ${{ github.workspace }}/Core/bin/BetterBeatSaber.Core.dll
+            ${{ github.workspace }}/Core/bin/BetterBeatSaber.Standalone.dll
+            ${{ github.workspace }}/Colorizer.Game/bin/BetterBeatSaber.Colorizer.Game.dll
+            ${{ github.workspace }}/Colorizer.UI/bin/BetterBeatSaber.Colorizer.UI.dll
+            ${{ github.workspace }}/DarkEnvironment/bin/BetterBeatSaber.DarkEnvironment.dll
+            ${{ github.workspace }}/MissTexts/bin/BetterBeatSaber.MissTexts.dll
+            ${{ github.workspace }}/ReeSabersColorizer/bin/BetterBeatSaber.ReeSabersColorizer.dll
+            ${{ github.workspace }}/SmoothedControllers/bin/BetterBeatSaber.SmoothedControllers.dll
+            ${{ github.workspace }}/Tweaks/bin/BetterBeatSaber.Tweaks.dll
+            ${{ github.workspace }}/**/bin/*.json
+          if-no-files-found: error
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./**/bin/*.dll
+            ./**/bin/*.json

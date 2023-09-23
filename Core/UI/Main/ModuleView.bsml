@@ -1,0 +1,17 @@
+<vertical bg="round-rect-panel" child-control-height="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+    <vertical vertical-fit="PreferredSize">
+        <horizontal pref-width="90" pad-top="5" pad-bottom="0">
+            <text id="title" font-size="5" bold="true" align="Center" />
+        </horizontal>
+        <horizontal pref-width="90" pad-left="5">
+            <text id="author" rich-text="true" color="#CCCCCC" />
+        </horizontal>
+        <horizontal pad-top="10" pad-left="5">
+            <text id="description" rich-text="true" />
+        </horizontal>
+    </vertical>
+    <horizontal horizontal-fit="PreferredSize" spacing="5">
+        <action-button id="install-or-open-settings" on-click="install-or-open-settings" preferred-width="50" preferred-height="10" text="Open Settings" />
+        <button id="uninstall" on-click="uninstall" preferred-width="20" preferred-height="10" text="Uninstall" />
+    </horizontal>
+</vertical>

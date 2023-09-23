@@ -1,0 +1,12 @@
+﻿{
+  "id": "hitscore",
+  "name": "Better HitScores",
+  "description": "Better HitScores",
+  "version": "0.0.1",
+  "author": "<rgb>StevenK</rgb>",
+  "conflicts_with": [
+    "HitScoreVisualizer",
+    "NalulunaFlyingScore"
+  ],
+  "requires_soft_restart": true
+}

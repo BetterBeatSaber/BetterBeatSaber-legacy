@@ -1,0 +1,8 @@
+<vertical bg='round-rect-panel' pad='5' pad-bottom='10' horizontal-fit='Unconstrained' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <horizontal>
+        <text id='Name' align='MidlineLeft' overflow-mode='Ellipsis' word-wrapping='false' />
+    </horizontal>
+    <horizontal>
+        <text id='Author' align='MidlineRight' word-wrapping='false' rich-text="true" color="#CCCCCC" />
+    </horizontal>
+</vertical>

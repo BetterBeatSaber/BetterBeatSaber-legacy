@@ -1,0 +1,8 @@
+﻿{
+  "id": "dark-environment",
+  "name": "Dark Environment",
+  "description": "Makes the Menu & Levels dark",
+  "version": "0.0.1",
+  "author": "<rgb>StevenK</rgb>",
+  "requires_soft_restart": true
+}

@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "dependencies": {
+    ".NETFramework,Version=v4.8": {
+      "LiteNetLib": {
+        "type": "Direct",
+        "requested": "[1.1.0, )",
+        "resolved": "1.1.0",
+        "contentHash": "GavpDPs65Y4vvAeECbApWXynTOn7f7IVIHmRKpPmzLWSf3vllcxHN4XPN+Tu3YFqIwOYUdgI8fhkCMhn4FLQCw=="
+      },
+      "System.ComponentModel.Annotations": {
+        "type": "Direct",
+        "requested": "[6.0.0-preview.4.21253.7, )",
+        "resolved": "6.0.0-preview.4.21253.7",
+        "contentHash": "h0eWBYUk1rLI31AAmLMgmVzy6UBMUBvRfAqB9VH+O8pMT5GBFpBJoTEIdhBfzcn7VS+aPPDzpLlASHXdjt2qXQ=="
+      }
+    },
+    ".NETStandard,Version=v2.1": {
+      "LiteNetLib": {
+        "type": "Direct",
+        "requested": "[1.1.0, )",
+        "resolved": "1.1.0",
+        "contentHash": "GavpDPs65Y4vvAeECbApWXynTOn7f7IVIHmRKpPmzLWSf3vllcxHN4XPN+Tu3YFqIwOYUdgI8fhkCMhn4FLQCw=="
+      },
+      "System.ComponentModel.Annotations": {
+        "type": "Direct",
+        "requested": "[6.0.0-preview.4.21253.7, )",
+        "resolved": "6.0.0-preview.4.21253.7",
+        "contentHash": "h0eWBYUk1rLI31AAmLMgmVzy6UBMUBvRfAqB9VH+O8pMT5GBFpBJoTEIdhBfzcn7VS+aPPDzpLlASHXdjt2qXQ=="
+      }
+    }
+  }
+}

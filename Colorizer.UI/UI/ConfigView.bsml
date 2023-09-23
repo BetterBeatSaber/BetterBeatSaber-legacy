@@ -1,0 +1,144 @@
+<vertical child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <tab-selector tab-tag='tabs' />
+    <horizontal>
+        <tab tab-name='Colorizers' tags='tabs'>
+            <horizontal min-width='120' min-height='70' horizontal-fit='PreferredSize'>
+                <settings-scroll-view>
+                    <modifier-container spacing='5'>
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='Colorizers' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <checkbox-setting text='Colorize Buttons' value='ColorizeButtons' apply-on-change='true' />
+                            <checkbox-setting text='Colorize Menu Buttons' value='ColorizeMenuButtons' apply-on-change='true' />
+                        </vertical>
+                    </modifier-container>
+                </settings-scroll-view>
+            </horizontal>
+        </tab>
+        <tab tab-name='Hud Modifiers' tags='tabs'>
+            <horizontal min-width='120' min-height='70' horizontal-fit='PreferredSize'>
+                <settings-scroll-view>
+                    <modifier-container spacing='5'>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='Combo' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <checkbox-setting text='Glow' value='ComboHudModifierGlow' apply-on-change='true' />
+                        </vertical>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='Energy' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <checkbox-setting text='Glow' value='EnergyHudModifierGlow' apply-on-change='true' />
+                            <checkbox-setting text='Shake on Combo Break' value='EnergyHudModifierShakeOnComboBreak' apply-on-change='true' />
+                        </vertical>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='Multiplier' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <checkbox-setting text='Glow' value='MultiplierHudModifierGlow' apply-on-change='true' />
+                        </vertical>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='Progress' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <checkbox-setting text='Glow' value='ProgressHudModifierGlow' apply-on-change='true' />
+                        </vertical>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='Rank' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <checkbox-setting text='Glow' value='ScoreHudModifierGlow' apply-on-change='true' />
+                        </vertical>
+
+                    </modifier-container>
+                </settings-scroll-view>
+            </horizontal>
+        </tab>
+        <tab tab-name='Custom Ranks' tags='tabs'>
+            <horizontal min-width='120' min-height='70' horizontal-fit='PreferredSize'>
+                <settings-scroll-view>
+                    <modifier-container spacing='5'>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='SS' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <string-setting text='Name' value='RankSSName' apply-on-change='true' />
+                            <color-setting id='rank-ss-color' text='Color' value='RankSSColor' apply-on-change='true' />
+                            <checkbox-setting text='RGB' value='RankSSRGB' apply-on-change='true' />
+                            <checkbox-setting text='Glow' value='RankSSGlow' apply-on-change='true' />
+                        </vertical>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='S' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <string-setting text='Name' value='RankSName' apply-on-change='true' />
+                            <color-setting id='rank-s-color' text='Color' value='RankSColor' apply-on-change='true' />
+                            <checkbox-setting text='RGB' value='RankSRGB' apply-on-change='true' />
+                            <checkbox-setting text='Glow' value='RankSGlow' apply-on-change='true' />
+                        </vertical>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='A' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <string-setting text='Name' value='RankAName' apply-on-change='true' />
+                            <color-setting id='rank-a-color' text='Color' value='RankSColor' apply-on-change='true' />
+                            <checkbox-setting text='RGB' value='RankARGB' apply-on-change='true' />
+                            <checkbox-setting text='Glow' value='RankAGlow' apply-on-change='true' />
+                        </vertical>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='B' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <string-setting text='Name' value='RankBName' apply-on-change='true' />
+                            <color-setting id='rank-b-color' text='Color' value='RankBColor' apply-on-change='true' />
+                            <checkbox-setting text='RGB' value='RankBRGB' apply-on-change='true' />
+                            <checkbox-setting text='Glow' value='RankBGlow' apply-on-change='true' />
+                        </vertical>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='C' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <string-setting text='Name' value='RankCName' apply-on-change='true' />
+                            <color-setting id='rank-c-color' text='Color' value='RankCColor' apply-on-change='true' />
+                            <checkbox-setting text='RGB' value='RankCRGB' apply-on-change='true' />
+                            <checkbox-setting text='Glow' value='RankCGlow' apply-on-change='true' />
+                        </vertical>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='D' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <string-setting text='Name' value='RankDName' apply-on-change='true' />
+                            <color-setting id='rank-d-color' text='Color' value='RankDColor' apply-on-change='true' />
+                            <checkbox-setting text='RGB' value='RankDRGB' apply-on-change='true' />
+                            <checkbox-setting text='Glow' value='RankDGlow' apply-on-change='true' />
+                        </vertical>
+
+                        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                            <horizontal pref-width='90'>
+                                <text text='E' font-size='5' bold='true' align='Center' />
+                            </horizontal>
+                            <string-setting text='Name' value='RankEName' apply-on-change='true' />
+                            <color-setting id='rank-e-color' text='Color' value='RankEColor' apply-on-change='true' />
+                            <checkbox-setting text='RGB' value='RankERGB' apply-on-change='true' />
+                            <checkbox-setting text='Glow' value='RankEGlow' apply-on-change='true' />
+                        </vertical>
+
+                    </modifier-container>
+                </settings-scroll-view>
+            </horizontal>
+        </tab>
+    </horizontal>
+</vertical>

@@ -1,0 +1,11 @@
+﻿<modal click-off-closes='true' move-to-center='true' show-event='Open' size-delta-x='100' size-delta-y='60'>
+    <vertical bg='round-rect-panel' child-control-height='true' pad-top='5' pad-left='5' pad-bottom='5' pad-right='5' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+        <horizontal pref-width='100' pref-height='30'>
+            <text id='Title' font-size='5' bold='true' align='Center' rich='true' />
+            <text id='Text' font-size='3' rich='true' />
+            <horizontal pref-width='100' pref-height='30'>
+                <button text='Sheesh' />
+            </horizontal>
+        </horizontal>
+    </vertical>
+</modal>

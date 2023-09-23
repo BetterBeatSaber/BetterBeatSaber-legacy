@@ -1,0 +1,10 @@
+﻿{
+  "id": "reesabers-colorizer",
+  "name": "ReeSabers Colorizer",
+  "description": "Colorizes ReeSabers (Version 0.2.0)",
+  "version": "0.0.1",
+  "author": "<rgb>StevenK</rgb>",
+  "dependencies": [
+    "ReeSabers^0.2.0"
+  ]
+}

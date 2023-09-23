@@ -1,0 +1,41 @@
+﻿<vertical child-control-height='false' pref-width='100' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <tab-selector tab-tag='tabs' />
+    <horizontal>
+        <tab tab-name='Settings' tags='tabs'>
+            <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                <!-- Online Mode !!! ... -->
+                <!-- Custom Names for Patrons -->
+                <checkbox-setting text='Enable Custom Title' value='CustomTitle' apply-on-change='true' />
+                <checkbox-setting text='Show Friend List' value='ShowFriendList' apply-on-change='true' />
+                <checkbox-setting text='Unlock Friend List' value='ShowFriendListHandle' apply-on-change='true' />
+                <dropdown-list-setting text='Friend List Visibility' value='FriendListVisibility' on-change='OnChangeFriendListVisibility' options='FriendListVisibilities' />
+                <button id='DeleteButton' on-click='DeleteAccount' preferred-width='60' preferred-height='10' text='Delete My Account' />
+            </vertical>
+        </tab>
+        <tab tab-name='Network Information' tags='tabs'>
+            <vertical bg='round-rect-panel' vertical-fit='PreferredSize' horizontal-fit='PreferredSize' pref-width='80' pad='5'>
+                <horizontal>
+                    <text text='Network Information' font-size='5' bold='true' align='Center' />
+                </horizontal>
+                <horizontal>
+                    <grid cell-size-y='3'>
+                        <text id='State' font-size='2' />
+                        <text id='Ping' font-size='2' />
+                        <text id='RTT' font-size='2' />
+                        <text id='PacketsReceived' font-size='2' />
+                        <text id='PacketsSent' font-size='2' />
+                        <text id='PacketLoss' font-size='2' />
+                        <text id='BytesReceived' font-size='2' />
+                        <text id='BytesSent' font-size='2' />
+                        <text id='Version' font-size='2' />
+                    </grid>
+                </horizontal>
+            </vertical>
+        </tab>
+        <tab tab-name='Integrations' tags='tabs'>
+            <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                <list id='IntegrationList' />
+            </vertical>
+        </tab>
+    </horizontal>
+</vertical>

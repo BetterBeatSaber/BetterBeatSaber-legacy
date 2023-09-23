@@ -1,0 +1,13 @@
+﻿<vertical child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <horizontal min-width='120' min-height='70' horizontal-fit='PreferredSize'>
+        <settings-scroll-view>
+            <modifier-container spacing='5'>
+                <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                    <!--<checkbox-setting text='Enable Module' value='Enable' apply-on-change='true' />-->
+                    <checkbox-setting text='Enable Glow Text' value='EnableGlow' apply-on-change='true' />
+                    <slider-setting text='Scale Text Size' value='Scale' apply-on-change='true' min='10' max='200' increment='5' />
+                </vertical>
+            </modifier-container>
+        </settings-scroll-view>
+    </horizontal>
+</vertical>

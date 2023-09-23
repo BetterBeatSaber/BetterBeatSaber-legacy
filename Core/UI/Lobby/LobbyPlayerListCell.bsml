@@ -1,0 +1,11 @@
+﻿<vertical bg='round-rect-panel' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <horizontal>
+        <vertical pref-width='12'>
+            <image id='Avatar' pref-width='11' pref-height='11' preserve-aspect='true' />
+        </vertical>
+        <vertical pref-width='60' pad-left='5' pad-top='2' pad-bottom='2'>
+            <text id='Name' overflow-mode='Ellipsis' word-wrapping='false' font-size='6' />
+            <text id='Status' overflow-mode='Ellipsis' word-wrapping='false' />
+        </vertical>
+    </horizontal>
+</vertical>

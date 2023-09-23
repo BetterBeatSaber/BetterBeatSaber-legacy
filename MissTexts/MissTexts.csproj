@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{C1BF6338-8697-4290-93FA-D1DEC3247736}</ProjectGuid>
+        <RootNamespace>BetterBeatSaber.MissTexts</RootNamespace>
+        <AssemblyName>BetterBeatSaber.MissTexts</AssemblyName>
+        <ModuleId>miss-texts</ModuleId>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>$(BeatSaberLibsDirectory)\0Harmony.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="BeatmapCore">
+            <HintPath>$(BeatSaberManagedDirectory)\BeatmapCore.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="HMLib">
+            <HintPath>$(BeatSaberManagedDirectory)\HMLib.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="IPA.Loader">
+            <HintPath>$(BeatSaberManagedDirectory)\IPA.Loader.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Main">
+            <HintPath>$(BeatSaberManagedDirectory)\Main.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>$(BeatSaberManagedDirectory)\Unity.TextMeshPro.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.CoreModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Zenject">
+            <HintPath>$(BeatSaberManagedDirectory)\Zenject.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="MissTexts.cs" />
+        <Compile Include="Patches\FlyingTextEffectInitAndPresentPatch.cs" />
+        <Compile Include="Patches\MissedNoteEffectSpawnerHandleNoteWasMissedPatch.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+
+    <Import Project="..\Module.Build.props" />
+
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+</Project>

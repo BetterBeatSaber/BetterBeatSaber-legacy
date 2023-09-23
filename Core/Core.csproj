@@ -1,0 +1,336 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{E3E83A10-B268-4A24-A80E-B0752988E242}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>BetterBeatSaber.Core</RootNamespace>
+        <AssemblyName>BetterBeatSaber.Core</AssemblyName>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <Target Name="CopyToDevelopmentServer" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+        <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFiles="$(ServerDataDirectory)\core.dll" />
+    </Target>
+
+    <ItemGroup>
+        <Reference Include="mscorlib" />
+        <Reference Include="System" />
+        <Reference Include="System.ComponentModel.DataAnnotations" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Net.Http" />
+        <Reference Include="System.Numerics" />
+        <Reference Include="System.Runtime" />
+        <Reference Include="System.Runtime.Serialization" />
+        <Reference Include="System.Web" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>$(BeatSaberLibsDirectory)\0Harmony.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="BeatLeader">
+            <HintPath>$(BeatSaberPluginsDirectory)\BeatLeader.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="BeatmapCore">
+            <HintPath>$(BeatSaberManagedDirectory)\BeatmapCore.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="BSML">
+            <HintPath>$(BeatSaberPluginsDirectory)\BSML.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="GameplayCore">
+            <HintPath>$(BeatSaberManagedDirectory)\GameplayCore.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Hive.Versioning">
+            <HintPath>$(BeatSaberLibsDirectory)\Hive.Versioning.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="HMLib">
+            <HintPath>$(BeatSaberManagedDirectory)\HMLib.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="HMRendering">
+            <HintPath>$(BeatSaberManagedDirectory)\HMRendering.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="HMUI">
+            <HintPath>$(BeatSaberManagedDirectory)\HMUI.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="IPA.Loader">
+            <HintPath>$(BeatSaberManagedDirectory)\IPA.Loader.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Main">
+            <HintPath>$(BeatSaberManagedDirectory)\Main.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Mono.Cecil">
+            <HintPath>$(BeatSaberLibsDirectory)\Mono.Cecil.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Newtonsoft.Json">
+            <HintPath>$(BeatSaberLibsDirectory)\Newtonsoft.Json.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="SongDetailsCache">
+            <HintPath>$(BeatSaberLibsDirectory)\SongDetailsCache.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="SteamVR">
+            <HintPath>$(BeatSaberManagedDirectory)\SteamVR.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Steamworks.NET">
+            <HintPath>$(BeatSaberManagedDirectory)\Steamworks.NET.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>$(BeatSaberManagedDirectory)\Unity.TextMeshPro.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.AssetBundleModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.AssetBundleModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.AudioModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.AudioModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.CoreModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.ImageConversionModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.ImageConversionModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.ParticleSystemModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.ParticleSystemModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.PerformanceReportingModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.PerformanceReportingModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.TextCoreModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.TextCoreModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.TextRenderingModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.TextRenderingModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.UI.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UIModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.UIModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UnityAnalyticsModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UnityWebRequestModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.UnityWebRequestModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UnityWebRequestTextureModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.VRModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.VRModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.XRModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.XRModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Condition="'$(Configuration)' == 'Debug'" Include="UnityExplorer.STANDALONE.Mono">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityExplorer.STANDALONE.Mono.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRUI">
+            <HintPath>$(BeatSaberManagedDirectory)\VRUI.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Zenject">
+            <HintPath>$(BeatSaberManagedDirectory)\Zenject.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Zenject-usage">
+            <HintPath>$(BeatSaberManagedDirectory)\Zenject-usage.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Compile Include="Bindings\FireworksBinding.cs" />
+        <Compile Include="Bindings\MenuSignBinding.cs" />
+        <Compile Include="Config\Converters\QuaternionConverter.cs" />
+        <Compile Include="Config\Converters\Vector2Converter.cs" />
+        <Compile Include="Config\Converters\Vector3Converter.cs" />
+        <Compile Include="Config\CoreConfig.cs" />
+        <Compile Include="Extensions\BeatmapExtensions.cs" />
+        <Compile Include="Extensions\DictionaryExtensions.cs" />
+        <Compile Include="Extensions\LobbyExtensions.cs" />
+        <Compile Include="Extensions\LongExtensions.cs" />
+        <Compile Include="Extensions\ObjectExtensions.cs" />
+        <Compile Include="Extensions\ViewExtensions.cs" />
+        <Compile Include="Extensions\PresenceExtensions.cs" />
+        <Compile Include="Extensions\RankExtensions.cs" />
+        <Compile Include="Extensions\TypeExtensions.cs" />
+        <Compile Include="Game\Enums\GenericScene.cs" />
+        <Compile Include="Game\BeatSaber.cs" />
+        <Compile Include="Harmomy\DynamicPluginPatchAttribute.cs" />
+        <Compile Include="Harmomy\PluginPatchAttribute.cs" />
+        <Compile Include="Manager\AssetManager.cs" />
+        <Compile Include="Manager\Audio\Audio.cs" />
+        <Compile Include="Manager\Audio\AudioManager.cs" />
+        <Compile Include="Manager\AuthManager.cs" />
+        <Compile Include="Manager\FriendManager.cs" />
+        <Compile Include="Manager\IntegrationManager.cs" />
+        <Compile Include="Manager\Interop\IInterop.cs" />
+        <Compile Include="Manager\Interop\IMultiplayerInterop.cs" />
+        <Compile Include="Manager\Interop\InteropManager.cs" />
+        <Compile Include="Manager\Interop\Interops\BeatLeaderInterop.cs" />
+        <Compile Include="Manager\Interop\IReplayInterop.cs" />
+        <Compile Include="Manager\LobbyManager.cs" />
+        <Compile Include="Manager\Manager.cs" />
+        <Compile Include="Manager\MapManager.cs" />
+        <Compile Include="Manager\ModuleManager.cs" />
+        <Compile Include="Manager\PlayerManager.cs" />
+        <Compile Include="Manager\PresenceManager.cs" />
+        <Compile Include="Manager\Service\Service.cs" />
+        <Compile Include="Manager\Service\ServiceManager.cs" />
+        <Compile Include="Module.cs" />
+        <Compile Include="Multiplayer\TestPatch.cs" />
+        <Compile Include="Network\NetworkClient.cs" />
+        <Compile Include="Patches\MenuButtonsViewControllerDidActivatePatch.cs" />
+        <Compile Include="Patches\MenuTransitionsHelperPatch.cs" />
+        <Compile Include="Patches\PrivacyPatches.cs" />
+        <Compile Include="Tomlyn/**" />
+        <Compile Include="Api\ApiClient.cs" />
+        <Compile Include="BetterBeatSaber.cs" />
+        <Compile Include="Config\Config.cs" />
+        <Compile Include="Config\ConfigManager.cs" />
+        <Compile Include="Config\Converters\ColorConverter.cs" />
+        <Compile Include="Enums\Visibility.cs" />
+        <Compile Include="Extensions\ColorExtensions.cs" />
+        <Compile Include="Extensions\HttpContentExtensions.cs" />
+        <Compile Include="Harmomy\Dynamic\DynamicPatch.cs" />
+        <Compile Include="Harmomy\Dynamic\DynamicPatchAttribute.cs" />
+        <Compile Include="Harmomy\Patch.cs" />
+        <Compile Include="Interfaces\IEnableable.cs" />
+        <Compile Include="Interfaces\IInitializable.cs" />
+        <Compile Include="Patches\ContextInstallInstallersPatch.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Provider\AssetProvider.cs" />
+        <Compile Include="TextMeshPro\RGBGradientRichTag.cs" />
+        <Compile Include="TextMeshPro\RGBRichTag.cs" />
+        <Compile Include="TextMeshPro\TextMeshProAddon.cs" />
+        <Compile Include="Threading\ThreadDispatcher.cs" />
+        <Compile Include="UI\BSML\RGBTextTag.cs" />
+        <Compile Include="UI\CachedListData.cs" />
+        <Compile Include="UI\Components\AvatarComponent.cs" />
+        <Compile Include="UI\Components\SearchBox.cs" />
+        <Compile Include="UI\FloatingView.cs" />
+        <Compile Include="UI\FlowController.cs" />
+        <Compile Include="UI\Friends\FriendListCell.cs" />
+        <Compile Include="UI\Friends\FriendsScreen.cs" />
+        <Compile Include="UI\Lobby\LobbyPlayerListCell.cs" />
+        <Compile Include="UI\Lobby\LobbyFloatingView.cs" />
+        <Compile Include="UI\Main\FriendRequestCell.cs" />
+        <Compile Include="UI\Main\IntegrationCell.cs" />
+        <Compile Include="UI\Main\LeftView.cs" />
+        <Compile Include="UI\Main\MainView.cs" />
+        <Compile Include="UI\Main\MainFlowController.cs" />
+        <Compile Include="UI\Main\ModuleFlowController.cs" />
+        <Compile Include="UI\Main\ModuleListCell.cs" />
+        <Compile Include="UI\Main\ModuleView.cs" />
+        <Compile Include="UI\Main\PlayerListCell.cs" />
+        <Compile Include="UI\Map\MapView.cs" />
+        <Compile Include="UI\ModifierView.cs" />
+        <Compile Include="UI\Popup\Popup.cs" />
+        <Compile Include="UI\Profile\ProfileView.cs" />
+        <Compile Include="UI\ListData.cs" />
+        <Compile Include="UI\ListCell.cs" />
+        <Compile Include="UI\UIManager.cs" />
+        <Compile Include="UI\View.cs" />
+        <Compile Include="Utilities\RGB.cs" />
+        <Compile Include="Utilities\Singleton.cs" />
+        <Compile Include="Zenject\Installer.cs" />
+        <Compile Include="Zenject\Internal\ExposeData.cs" />
+        <Compile Include="Zenject\Internal\InstallData.cs" />
+        <Compile Include="Zenject\Location.cs" />
+        <Compile Include="Zenject\ZenjectManager.cs" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Compile Include="LiteNetLib/**/*" />
+        <Compile Include="WebSocketSharp/**/*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\Shared\**\*.*">
+            <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Compile>
+        <Compile Remove="..\Shared\bin\**" />
+        <Compile Remove="..\Shared\obj\**" />
+        <Compile Remove="..\Shared\Shared.csproj" />
+        <Compile Remove="..\Shared\packages.lock.json" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        
+        <EmbeddedResource Include="Resources\assets" />
+
+        <EmbeddedResource Include="UI\Main\MainView.bsml" />
+        <EmbeddedResource Include="UI\Main\LeftView.bsml" />
+
+        <EmbeddedResource Include="UI\Main\ModuleListCell.bsml" />
+        <EmbeddedResource Include="UI\Main\FriendRequestCell.bsml" />
+        <EmbeddedResource Include="UI\Main\PlayerListCell.bsml" />
+        <EmbeddedResource Include="UI\Popup\Popup.bsml" />
+
+        <EmbeddedResource Include="UI\Lobby\LobbyPlayerListCell.bsml" />
+        <EmbeddedResource Include="UI\Lobby\LobbyFloatingView.bsml" />
+        
+        <EmbeddedResource Include="UI\Profile\ProfileView.bsml" />
+        <EmbeddedResource Include="UI\Map\MapView.bsml" />
+
+        <EmbeddedResource Include="UI\Main\ModuleView.bsml" />
+
+        <EmbeddedResource Include="UI\Main\IntegrationCell.bsml" />
+
+        <EmbeddedResource Include="UI\Friends\FriendsScreen.bsml" />
+        <EmbeddedResource Include="UI\Friends\FriendListCell.bsml" />
+
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="App.config" />
+    </ItemGroup>
+
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+</Project>

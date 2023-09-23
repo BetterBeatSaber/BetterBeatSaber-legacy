@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.1;net48</TargetFrameworks>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <AssemblyName>BetterBeatSaber.Twitch.Shared</AssemblyName>
+        <RootNamespace>BetterBeatSaber.Twitch.Shared</RootNamespace>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="LiteNetLib" Version="1.1.0" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7" />
+    </ItemGroup>
+
+</Project>

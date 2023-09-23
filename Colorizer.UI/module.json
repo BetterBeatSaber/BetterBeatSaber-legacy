@@ -1,0 +1,8 @@
+﻿{
+  "id": "colorizer-ui",
+  "name": "UI Colorizer",
+  "description": "Colorizes the UI (adds more RGB)",
+  "version": "0.0.1",
+  "author": "<rgb>StevenK</rgb>",
+  "requires_soft_restart": true
+}

@@ -1,0 +1,7 @@
+﻿<vertical bg='round-rect-panel' horizontal-fit='Unconstrained' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <horizontal pad-left='4' pad-right='2'>
+        <text id='Name' />
+        <action-button id='AcceptButton' text='Accept' on-click='AcceptRequest' />
+        <button id='DeclineButton' text='Decline' on-click='DeclineRequest' />
+    </horizontal>
+</vertical>

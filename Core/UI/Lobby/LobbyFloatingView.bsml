@@ -1,0 +1,30 @@
+﻿<vertical bg="round-rect-panel" child-control-height="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd">
+    <tab-selector tab-tag='tabs' />
+    <horizontal>
+        <tab tab-name='Players' tags='tabs'>
+            <vertical pref-width="80">
+                <list id="PlayerList" select-cell="SelectPlayer" stick-scrolling="true" show-scrollbar="true" />
+            </vertical>
+        </tab>
+        <tab tab-name='Leaderboard' tags='tabs'>
+            <vertical>
+                <text text="Coming soon ..." />
+            </vertical>
+        </tab>
+        <tab tab-name='Settings' tags='tabs'>
+            <vertical>
+                <text text="Coming soon ..." />
+            </vertical>
+        </tab>
+    </horizontal>
+    <vertical vertical-fit="PreferredSize">
+        <horizontal pref-width="90" pad-top="5" pad-bottom="0">
+            <text text="Friends" font-size="6" bold="true" align="Center" />
+        </horizontal>
+        <horizontal pref-height="75" pad-top="5" pad-bottom="2">
+            <vertical pref-width="80">
+                <list id="FriendList" select-cell="SelectFriend" stick-scrolling="true" show-scrollbar="true" />
+            </vertical>
+        </horizontal>
+    </vertical>
+</vertical>

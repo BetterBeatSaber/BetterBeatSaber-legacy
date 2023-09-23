@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{B971AEDA-50C8-457D-8BFB-3F9C2AF8AE1F}</ProjectGuid>
+        <RootNamespace>BetterBeatSaber.ReeSabersColorizer</RootNamespace>
+        <AssemblyName>BetterBeatSaber.ReeSabersColorizer</AssemblyName>
+        <ModuleId>reesabers-colorizer</ModuleId>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>$(BeatSaberLibsDirectory)\0Harmony.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="IPA.Loader">
+            <HintPath>$(BeatSaberManagedDirectory)\IPA.Loader.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="ReeSabers">
+            <HintPath>$(BeatSaberPluginsDirectory)\ReeSabers.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.CoreModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="Patches\ReeSabersPatch.cs" />
+        <Compile Include="ReeSabersColorizer.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+
+    <Import Project="..\Module.Build.props" />
+
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+</Project>

@@ -1,0 +1,35 @@
+<vertical child-control-height='false' pref-width='100' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <tab-selector tab-tag='tabs' />
+    <horizontal>
+        <tab tab-name='Modules' tags='tabs'>
+            <vertical child-control-height='false' vertical-fit='PreferredSize'>
+                <horizontal pref-height='75' pref-width='80' pad-top='5' pad-bottom='2'>
+                    <list id='ModuleList' select-cell='SelectModule' stick-scrolling='true' show-scrollbar='true' />
+                </horizontal>
+            </vertical>
+        </tab>
+        <tab tab-name='Friend Requests' tags='tabs'>
+            <vertical child-control-height='false' vertical-fit='PreferredSize'>
+                <horizontal pref-height='75' pref-width='80' pad-top='5' pad-bottom='2'>
+                    <list id='FriendRequestList' select-cell='SelectFriendRequest' stick-scrolling='true' show-scrollbar='true' />
+                    <vertical id='FriendRequestListEmpty' vertical-fit="PreferredSize">
+                        <text text="You don't have any friend requests ..." font-size='5' bold='true' align='Center' />
+                    </vertical>
+                </horizontal>
+            </vertical>
+        </tab>
+        <tab tab-name='Search for Players' tags='tabs'>
+            <vertical child-control-height='false' vertical-fit='PreferredSize'>
+                <horizontal pref-width='80' pref-height='15' pad-top='5' pad-bottom='5' horizontal-fit='PreferredSize'>
+                    <vertical id='searchBoxContainer' pref-width='80' />
+                </horizontal>
+                <horizontal pref-width='80' pref-height='60' pad-top='0' pad-bottom='0' horizontal-fit='PreferredSize'>
+                    <list id='PlayerList' select-cell='SelectPlayer' show-scrollbar='true' />
+                    <vertical id='PlayerSearchStateContainer' vertical-fit='PreferredSize'>
+                        <text id='PlayerSearchState' font-size='5' bold='true' align='Center' />
+                    </vertical>
+                </horizontal>
+            </vertical>
+        </tab>
+    </horizontal>
+</vertical>

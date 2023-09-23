@@ -1,0 +1,34 @@
+<vertical child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <horizontal min-width='120' min-height='70' horizontal-fit='PreferredSize'>
+        <settings-scroll-view>
+            <modifier-container spacing='5'>
+    
+                <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                    <horizontal pref-width='90'>
+                        <text text='Notes' font-size='5' bold='true' align='Center' />
+                    </horizontal>
+                    <slider-setting text='Size' value='NoteSize' apply-on-change='true' min='10' max='200' increment='5' />
+                </vertical>
+    
+                <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                    <horizontal pref-width='90'>
+                        <text text='Bombs' font-size='5' bold='true' align='Center' />
+                    </horizontal>
+                    <!--<slider-setting text='Size' value='BombSize' apply-on-change='true' min='10' max='200' increment='5' />-->
+                    <checkbox-setting text='Disable Explosion Effect' value='DisableBombExplosionEffect' apply-on-change='true' />
+                    <color-setting text='Color' value='BombColor' apply-on-change='true' />
+                </vertical>
+    
+                <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                    <horizontal pref-width='90'>
+                        <text text='Extras' font-size='5' bold='true' align='Center' />
+                    </horizontal>
+                    <checkbox-setting text='Disable Combo Break Effect' value='DisableComboBreakEffect' apply-on-change='true' />
+                    <checkbox-setting text='Disable Cut Particles' value='DisableCutParticles' apply-on-change='true' />
+                    <checkbox-setting text='Disable April Fools And Earth Day Stuff' value='DisableAprilFoolsAndEarthDayStuff' apply-on-change='true' />
+                </vertical>
+    
+            </modifier-container>
+        </settings-scroll-view>
+    </horizontal>
+</vertical>

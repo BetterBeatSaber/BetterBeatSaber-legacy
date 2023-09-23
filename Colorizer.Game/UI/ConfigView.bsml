@@ -1,0 +1,50 @@
+<vertical child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <tab-selector tab-tag='tabs' />
+    <horizontal min-width='120' min-height='70' horizontal-fit='PreferredSize'>
+        <tab tab-name='Notes' tags='tabs'>
+            <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                <horizontal pref-width='90'>
+                    <rgb-text text='Notes' font-size='5' bold='true' align='Center' />
+                </horizontal>
+                <checkbox-setting text='Colorize Outlines' value='NotesColorize' apply-on-change='true' />
+                <increment-setting text='Outline Width' value='NotesOutlinesWidth' apply-on-change='true' min='0.5' max='20' increment='0.5' />
+                <dropdown-list-setting text='Visibility' value='NotesVisibility' apply-on-change='true' options='visibilities' />
+                <checkbox-setting text='Glow' value='NotesGlow' apply-on-change='true' />
+                <checkbox-setting text='Colorize Debris' value='ColorizeDebris' apply-on-change='true' />
+                <checkbox-setting id='custom-notes' text='Colorize Custom Notes' value='ColorizeCustomNotes' apply-on-change='true' />
+            </vertical>
+        </tab>
+        <tab tab-name='Bombs' tags='tabs'>
+            <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                <horizontal pref-width='90'>
+                    <rgb-text text='Bombs' font-size='5' bold='true' align='Center' />
+                </horizontal>
+                <checkbox-setting text='Colorize' value='BombsColorize' apply-on-change='true' />
+                <checkbox-setting text='Colorize Outlines' value='BombsColorizeOutlines' apply-on-change='true' />
+                <increment-setting text='Outlines Width' value='BombsOutlinesWidth' apply-on-change='true' min='0.5' max='20' increment='0.5' />
+                <dropdown-list-setting text='Outlines Visibility' value='BombsVisibility' apply-on-change='true' options='visibilities' />
+                <checkbox-setting text='Outlines Glow' value='BombsGlow' apply-on-change='true' />
+            </vertical>
+        </tab>
+        <tab tab-name='Obstacles' tags='tabs'>
+            <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                <horizontal pref-width='90'>
+                    <rgb-text text='Obstacles' font-size='5' bold='true' align='Center' />
+                </horizontal>
+                <checkbox-setting text='Colorize Obstacles' value='ObstaclesColorize' apply-on-change='true' />
+                <checkbox-setting text='Make Obstacles Transparent' value='ObstaclesTransparent' apply-on-change='true' />
+            </vertical>
+        </tab>
+        <tab tab-name='Extras' tags='tabs'>
+            <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+                <horizontal pref-width='90'>
+                    <rgb-text text='Extras' font-size='5' bold='true' align='Center' />
+                </horizontal>
+                <!--<checkbox-setting text='Colorize Arcs' value='ColorizeArcs' apply-on-change='true' />-->
+                <checkbox-setting text='Colorize Players Place Border' value='ColorizePlayersPlaceBorder' apply-on-change='true' />
+                <checkbox-setting text='Colorize Feet' value='ColorizeFeet' apply-on-change='true' />
+                <checkbox-setting text='Colorize Burn Marks' value='ColorizeBurnMarks' apply-on-change='true' />
+            </vertical>
+        </tab>
+    </horizontal>
+</vertical>

@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{7D288C73-7F71-41AD-A666-5B6D9C841F8B}</ProjectGuid>
+        <RootNamespace>BetterBeatSaber.Colorizer.Game</RootNamespace>
+        <AssemblyName>BetterBeatSaber.Colorizer.Game</AssemblyName>
+        <ModuleId>colorizer-game</ModuleId>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>$(BeatSaberLibsDirectory)\0Harmony.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="BeatmapCore">
+            <HintPath>$(BeatSaberManagedDirectory)\BeatmapCore.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="BSML">
+            <HintPath>$(BeatSaberPluginsDirectory)\BSML.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Hive.Versioning">
+            <HintPath>$(BeatSaberLibsDirectory)\Hive.Versioning.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="HMRendering">
+            <HintPath>$(BeatSaberManagedDirectory)\HMRendering.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="HMUI">
+            <HintPath>$(BeatSaberManagedDirectory)\HMUI.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="IPA.Loader">
+            <HintPath>$(BeatSaberManagedDirectory)\IPA.Loader.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Main">
+            <HintPath>$(BeatSaberManagedDirectory)\Main.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>$(BeatSaberManagedDirectory)\Unity.TextMeshPro.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.AssetBundleModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.AssetBundleModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.CoreModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.ParticleSystemModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.ParticleSystemModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.TextRenderingModule">
+            <HintPath>$(BeatSaberManagedDirectory)\UnityEngine.TextRenderingModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Zenject">
+            <HintPath>$(BeatSaberManagedDirectory)\Zenject.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Compile Include="Colorizer\BombColorizer.cs" />
+        <Compile Include="Colorizer\BurnMarksColorizer.cs" />
+        <Compile Include="Colorizer\DustColorizer.cs" />
+        <Compile Include="Config\GameColorizerConfig.cs" />
+        <Compile Include="DynamicPatches\ColorizeOutlinesPatch.cs" />
+        <Compile Include="DynamicPatches\BurnMarkPatch.cs" />
+        <Compile Include="DynamicPatches\ColorizeBombPatch.cs" />
+        <Compile Include="DynamicPatches\CustomNotesPatch.cs" />
+        <Compile Include="DynamicPatches\ObstacleControllerInitPatch.cs" />
+        <Compile Include="GameColorizer.cs" />
+        <Compile Include="Colorizer\FeetColorizer.cs" />
+        <Compile Include="Colorizer\ObstacleColorizer.cs" />
+        <Compile Include="Colorizer\PlayersPlaceColorizer.cs" />
+        <Compile Include="Installer\GameInstaller.cs" />
+        <Compile Include="Installer\MenuInstaller.cs" />
+        <Compile Include="Patches\BaseNoteVisualsOnDestroyPatch.cs" />
+        <Compile Include="Patches\BeatmapObjectsInstallerInstallBindingsPatch.cs" />
+        <Compile Include="Patches\NoteDebrisInitAndUpdatePatch.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="UI\ConfigView.cs" />
+        <Compile Include="Utilities\Outline.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\resources" />
+        <EmbeddedResource Include="UI\ConfigView.bsml" />
+    </ItemGroup>
+
+    <Import Project="..\Module.Build.props" />
+    
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+</Project>
