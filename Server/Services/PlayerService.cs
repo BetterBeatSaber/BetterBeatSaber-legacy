@@ -3,14 +3,11 @@
 using BetterBeatSaber.Server.Leaderboards;
 using BetterBeatSaber.Server.Network.Interfaces;
 using BetterBeatSaber.Server.Services.Interfaces;
+using BetterBeatSaber.Server.Steam;
 using BetterBeatSaber.Shared.Enums;
 using BetterBeatSaber.Shared.Network.Packets;
 
 using Microsoft.EntityFrameworkCore;
-
-using Steam.Models.SteamCommunity;
-
-using SteamWebAPI2.Interfaces;
 
 using IPlayerService = BetterBeatSaber.Server.Services.Interfaces.IPlayerService;
 using Player = BetterBeatSaber.Server.Models.Player;
@@ -22,38 +19,34 @@ public sealed class PlayerService : IPlayerService {
 
     private readonly AppContext _context;
     private readonly IServer _server;
-    private readonly ISteamUser _steamUser;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IConfigService _configService;
+    private readonly ISteamService _steamService;
 
     public IEnumerable<Player> Players => _context.Players;
     
-    public PlayerService(AppContext context, IServer server, ISteamUser steamUser, IServiceScopeFactory serviceScopeFactory, IConfigService configService) {
+    public PlayerService(AppContext context, IServer server, IServiceScopeFactory serviceScopeFactory, IConfigService configService, ISteamService steamService) {
         _context = context;
         _server = server;
-        _steamUser = steamUser;
         _serviceScopeFactory = serviceScopeFactory;
         _configService = configService;
+        _steamService = steamService;
     }
 
     public async Task<Player?> CreateOrUpdate(ulong? steamId) {
 
         if (steamId == null)
             return null;
-
-        PlayerSummaryModel playerSummary;
-        try {
-            var response = await _steamUser.GetPlayerSummaryAsync(steamId.Value);
-            playerSummary = response.Data;
-        } catch (Exception) {
+        
+        var playerSummary = await _steamService.GetPlayerSummary(steamId.Value);
+        if (playerSummary == null)
             return null;
-        }
         
         var player = await _context.Players.FirstOrDefaultAsync(player => player.Id == steamId.Value);
         if (player != null) {
 
             if(!player.Flags.HasFlag(PlayerFlag.HasCustomName))
-                player.Name = playerSummary.Nickname;
+                player.Name = playerSummary.PersonaName;
 
             player.AvatarUrl = playerSummary.AvatarFullUrl;
             
@@ -63,7 +56,7 @@ public sealed class PlayerService : IPlayerService {
             
             player = new Player {
                 Id = steamId.Value,
-                Name = playerSummary.Nickname,
+                Name = playerSummary.PersonaName,
                 AvatarUrl = playerSummary.AvatarFullUrl,
                 Role = PlayerRole.Player,
                 LastUpdate = DateTime.Now

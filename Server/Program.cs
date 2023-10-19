@@ -29,9 +29,6 @@ using Octokit;
 
 using Sentry;
 
-using SteamWebAPI2.Interfaces;
-using SteamWebAPI2.Utilities;
-
 using AppContext = BetterBeatSaber.Server.AppContext;
 using IPlayerService = BetterBeatSaber.Server.Services.Interfaces.IPlayerService;
 using PlayerService = BetterBeatSaber.Server.Services.PlayerService;
@@ -78,8 +75,6 @@ builder.Services.AddAuthentication(options => {
 
 #region Services
 
-var steamWebInterfaceFactory = new SteamWebInterfaceFactory(builder.Configuration.GetValue<string>("SteamApiKey"));
-
 builder.Services
        .AddSwaggerGen()
        .AddHttpClient()
@@ -109,9 +104,6 @@ builder.Services
            }));
 
        })
-
-       .AddSingleton<ISteamUserAuth, SteamUserAuth>(_ => steamWebInterfaceFactory.CreateSteamWebInterface<SteamUserAuth>())
-       .AddSingleton<ISteamUser, SteamUser>(_ => steamWebInterfaceFactory.CreateSteamWebInterface<SteamUser>())
 
        .AddSingleton<ISteamService, SteamService>()
        
@@ -209,5 +201,3 @@ scope.ServiceProvider
 #endregion
 
 app.Run();
-
-//LOL

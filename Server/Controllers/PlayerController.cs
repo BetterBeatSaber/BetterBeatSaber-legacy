@@ -1,15 +1,12 @@
 ﻿using BetterBeatSaber.Server.Extensions;
 using BetterBeatSaber.Server.Leaderboards.BeatLeader.Interfaces;
 using BetterBeatSaber.Server.Leaderboards.ScoreSaber.Interfaces;
+using BetterBeatSaber.Server.Steam;
 using BetterBeatSaber.Shared.Enums;
 using BetterBeatSaber.Shared.Models;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-using Steam.Models.SteamCommunity;
-
-using SteamWebAPI2.Interfaces;
 
 using IPlayerService = BetterBeatSaber.Server.Services.Interfaces.IPlayerService;
 
@@ -20,13 +17,13 @@ namespace BetterBeatSaber.Server.Controllers;
 public sealed class PlayerController : Controller {
 
     private readonly IPlayerService _playerService;
-    private readonly ISteamUser _steamUser;
+    private readonly ISteamService _steamService;
     private readonly IBeatLeaderClient _beatLeaderClient;
     private readonly IScoreSaberClient _scoreSaberClient;
 
-    public PlayerController(IPlayerService playerService, ISteamUser steamUser, IBeatLeaderClient beatLeaderClient, IScoreSaberClient scoreSaberClient) {
+    public PlayerController(IPlayerService playerService, ISteamService steamService, IBeatLeaderClient beatLeaderClient, IScoreSaberClient scoreSaberClient) {
         _playerService = playerService;
-        _steamUser = steamUser;
+        _steamService = steamService;
         _beatLeaderClient = beatLeaderClient;
         _scoreSaberClient = scoreSaberClient;
     }
@@ -38,20 +35,16 @@ public sealed class PlayerController : Controller {
         if (player != null)
             return player.ToSharedModel();
 
-        PlayerSummaryModel? playerSummary;
-        try {
-            var response = await _steamUser.GetPlayerSummaryAsync(id);
-            playerSummary = response.Data;
-        } catch (Exception _) {
+        var playerSummary = await _steamService.GetPlayerSummary(id);
+        if (playerSummary == null)
             return NotFound();
-        }
-
+        
         var scoreSaberPlayer = await _scoreSaberClient.GetPlayerInformation(id.ToString());
         var beatLeaderPlayer = await _beatLeaderClient.GetPlayer(id.ToString());
         
         return new Player {
             Id = id,
-            Name = playerSummary.Nickname,
+            Name = playerSummary.PersonaName,
             AvatarUrl = playerSummary.AvatarFullUrl,
             Role = PlayerRole.None,
             Flags = 0,

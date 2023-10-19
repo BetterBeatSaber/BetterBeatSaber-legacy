@@ -11,7 +11,7 @@ public abstract class View : BSMLViewController {
 
     protected const string PostParseEvent = "#post-parse";
     
-    public override string Content => GetType().ReadViewDefinition();
+    public override string Content => UIManager.ReadViewDefinition(GetType());
     
     protected static void SetActiveIfNot(GameObject obj) {
         if(!obj.activeSelf)
@@ -52,7 +52,7 @@ public abstract class View<T> : View where T : View<T> {
 
     public static T? Instance { get; private set; }
     
-    public override string Content => typeof(T).ReadViewDefinition();
+    public override string Content => UIManager.ReadViewDefinition<T>();
 
     protected View() {
         Instance = (T) this;

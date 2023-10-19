@@ -18,7 +18,7 @@ public sealed class SteamService : ISteamService {
     
     public async Task<(AuthResponseParams?, AuthResponseError?)> Authenticate(uint appId, string ticket) {
         
-        var response = await _httpClient.GetJsonAsync<AuthResponse>("ISteamUserAuth/AuthenticateUserTicket/v0001/" + new Dictionary<string, string> {
+        var response = await _httpClient.GetJsonAsync<ISteamResponse<AuthResponse>>("ISteamUserAuth/AuthenticateUserTicket/v0001/" + new Dictionary<string, string> {
             { "key", _apiKey },
             { "appid", appId.ToString() },
             { "ticket", ticket }
@@ -27,5 +27,19 @@ public sealed class SteamService : ISteamService {
         return response != null ? (response.Response.Params, response.Response.Error) : (null, null);
 
     }
+
+    public async Task<IEnumerable<ProfileResponsePlayer>> GetPlayerSummaries(params ulong[] steamIds) {
+        
+        var response = await _httpClient.GetJsonAsync<ISteamResponse<ProfileResponse>>("ISteamUser/GetPlayerSummaries/v0002/" + new Dictionary<string, string> {
+            { "key", _apiKey },
+            { "steamids", string.Join(",", steamIds) }
+        }.BuildQueryString());
+
+        return response?.Response.Players ?? Enumerable.Empty<ProfileResponsePlayer>();
+
+    }
+
+    public async Task<ProfileResponsePlayer?> GetPlayerSummary(ulong steamId) =>
+        (await GetPlayerSummaries(steamId)).FirstOrDefault();
 
 }

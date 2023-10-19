@@ -2,6 +2,8 @@
 
 namespace BetterBeatSaber.Core.Extensions; 
 
+// ReSharper disable InconsistentNaming
+
 public static class ObjectExtensions {
 
     public static void SetField<O, T>(this O obj, string fieldName, T value, BindingFlags bindingFlags = TypeExtensions.DefaultBindingFlags) {

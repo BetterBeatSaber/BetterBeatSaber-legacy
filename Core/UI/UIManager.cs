@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -16,6 +17,8 @@ using BetterBeatSaber.Core.Zenject;
 using HMUI;
 
 using IPA.Utilities;
+
+using ModestTree;
 
 using UnityEngine;
 
@@ -235,4 +238,60 @@ public sealed class UIManager : Manager<UIManager> {
     
     #endregion
 
+    #region Parse
+
+    #if !DEBUG
+    // ReSharper disable once CollectionNeverUpdated.Local
+    private static readonly Dictionary<Type, string> Cache = new();
+    #endif
+
+    internal const string Fallback = "<text text=\"Resource not found\" align=\"Center\"/>";
+    
+    private T Parse<T>() {
+
+        var d = BeatSaberUI.CreateViewController<View>();
+        
+        
+        return default;
+    }
+
+    private void Parse2() {
+        
+        
+    }
+
+    internal static string ReadViewDefinition<T>() where T : View =>
+        ReadViewDefinition(typeof(T));
+
+    internal static string ReadViewDefinition(Type type) {
+
+        #if !DEBUG
+        if (Cache.TryGetValue(type, out var definition) && definition != null)
+            return definition;
+        #endif
+
+        using var stream = type.Assembly.GetManifestResourceStream(GetViewDefinitionResourceName(type));
+        if (stream == null)
+            return Fallback;
+        
+        using var streamReader = new StreamReader(stream);
+        var resource = streamReader.ReadToEnd();
+
+        // ReSharper disable once ConvertIfStatementToReturnStatement
+        if (resource.IsEmpty())
+            return Fallback;
+        
+        #if !DEBUG
+        Cache[type] = resource;
+        #endif
+        
+        return resource;
+        
+    }
+    
+    public static string GetViewDefinitionResourceName(Type type) =>
+        string.Join(".", type.Namespace, type.Name, "bsml");
+
+    #endregion
+    
 }

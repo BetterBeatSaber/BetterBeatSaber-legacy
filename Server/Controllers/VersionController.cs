@@ -26,14 +26,13 @@ public sealed class VersionController : Controller {
     [Authorize]
     [HttpGet("{version}/modules")]
     public async Task<ActionResult<List<ModuleManifest>>> GetModules([FromRoute] string version) {
-        
-        var player = await _playerService.GetFromHttpContext(HttpContext);
-        if (player == null)
-            return Unauthorized();
 
+        var player = await _playerService.GetFromHttpContext(HttpContext);
         var modules = await _moduleService.GetModulesByVersion(version);
-        
-        return modules.Where(module => player.Role >= module.RequiredRole).ToList();
+
+        return player != null ?
+            modules.Where(module => player.Role >= module.RequiredRole).ToList() :
+            modules;
         
     }
     

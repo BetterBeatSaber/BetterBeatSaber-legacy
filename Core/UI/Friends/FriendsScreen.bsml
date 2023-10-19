@@ -4,7 +4,10 @@
             <text text="Friends" font-size="6" bold="true" align="Center" />
         </horizontal>
         <horizontal pref-height="75" pad-top="5" pad-bottom="2">
-            <vertical pref-width="80">
+            <vertical id="no-auth" pref-width="80">
+                <text text="You have to be authenticated" font-size="4" bold="true" align="Center" />
+            </vertical>
+            <vertical id="content" pref-width="80">
                 <list id="FriendList" select-cell="SelectFriend" stick-scrolling="true" show-scrollbar="true" />
             </vertical>
         </horizontal>

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Vertical PrefWidth="100">
+    <TabSelector Id="Testerrr" />
+    <Horizontal>
+        <Tab Name="Erster">
+            <Vertical>
+                <Text Size="8">UwU</Text>
+            </Vertical>
+        </Tab>
+    </Horizontal>
+    <Horizontal>
+        <Tab Name="Zweiter">
+            <Vertical>
+                <Text Size="8">UwU 2</Text>
+            </Vertical>
+        </Tab>
+    </Horizontal>
+    <Horizontal>
+        <Text Size="8">SEXXX</Text>
+        <Button>Fick mich</Button>
+    </Horizontal>
+</Vertical>

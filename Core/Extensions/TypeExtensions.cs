@@ -10,9 +10,9 @@ public static class TypeExtensions {
 
     #region Reflection
     
-    public const BindingFlags DefaultBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+    public const BindingFlags DefaultBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
     
-    public static T? Construct<T>(this Type type, IDictionary<string, object>? injections = null) {
+    public static T? Construct<T>(this Type type, IDictionary<string, object?>? injections = null) {
 
         var constructors = type.GetConstructors(DefaultBindingFlags);
         if (constructors.Length == 0)
@@ -33,7 +33,7 @@ public static class TypeExtensions {
 
         foreach (var property in type.GetProperties(DefaultBindingFlags)) {
 
-            if (!property.CanWrite || !injections.TryGetValue(property.Name, out var value))
+            if (!property.CanWrite || !injections.TryGetValue(property.Name, out var value) || value == null)
                 continue;
             
             property.SetValue(instance, value);
@@ -46,7 +46,7 @@ public static class TypeExtensions {
 
         foreach (var field in type.GetFields(DefaultBindingFlags)) {
             
-            if (!injections.TryGetValue(field.Name, out var value))
+            if (!injections.TryGetValue(field.Name, out var value) || value == null)
                 continue;
             
             field.SetValue(instance, value);

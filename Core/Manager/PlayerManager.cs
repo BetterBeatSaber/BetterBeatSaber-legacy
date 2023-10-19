@@ -55,8 +55,27 @@ public sealed class PlayerManager : Manager<PlayerManager> {
         
     }
 
-    public IEnumerator DownloadAvatarAndApply(Player player, Image image) {
+    public IEnumerator DownloadAvatarAndApply(ulong playerId, Image? image) {
+        
+        if(image == null)
+            yield break;
+        
+        if (_avatarCache.TryGetValue(playerId, out var avatar)) {
+            image.sprite = avatar;
+            yield break;
+        }
 
+        //yield return DownloadAvatar(playerId);
+
+        image.sprite = _avatarCache[playerId];
+        
+    }
+    
+    public IEnumerator DownloadAvatarAndApply(Player player, Image? image) {
+
+        if(image == null)
+            yield break;
+        
         if (_avatarCache.TryGetValue(player.Id, out var avatar)) {
             image.sprite = avatar;
             yield break;

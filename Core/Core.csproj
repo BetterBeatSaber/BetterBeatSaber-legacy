@@ -199,6 +199,7 @@
         <Compile Include="Config\CoreConfig.cs" />
         <Compile Include="Config\IConfigLoadedHandler.cs" />
         <Compile Include="Extensions\BeatmapExtensions.cs" />
+        <Compile Include="Extensions\GameObjectExtensions.cs" />
         <Compile Include="Extensions\LongExtensions.cs" />
         <Compile Include="Extensions\ObjectExtensions.cs" />
         <Compile Include="Extensions\PlayerExtensions.cs" />
@@ -206,6 +207,7 @@
         <Compile Include="Extensions\PresenceExtensions.cs" />
         <Compile Include="Extensions\RankExtensions.cs" />
         <Compile Include="Extensions\TypeExtensions.cs" />
+        <Compile Include="Extensions\ZenjectExtensions.cs" />
         <Compile Include="Game\Enums\GenericScene.cs" />
         <Compile Include="Game\BeatSaber.cs" />
         <Compile Include="Harmomy\DynamicPluginPatchAttribute.cs" />
@@ -257,6 +259,7 @@
         <Compile Include="UI\FlowController.cs" />
         <Compile Include="UI\Friends\FriendListCell.cs" />
         <Compile Include="UI\Friends\FriendsScreen.cs" />
+        <Compile Include="UI\IRequireAuth.cs" />
         <Compile Include="UI\Lobby\LobbyPlayerListCell.cs" />
         <Compile Include="UI\Lobby\LobbyFloatingView.cs" />
         <Compile Include="UI\Main\FriendRequestCell.cs" />
@@ -273,6 +276,26 @@
         <Compile Include="UI\Profile\ProfileView.cs" />
         <Compile Include="UI\ListData.cs" />
         <Compile Include="UI\ListCell.cs" />
+        <Compile Include="UI\SDK\Attributes\ComponentAttribute.cs" />
+        <Compile Include="UI\SDK\Attributes\IgnorePropertyAttribute.cs" />
+        <Compile Include="UI\SDK\BeatSaberUI.cs" />
+        <Compile Include="UI\SDK\Component.cs" />
+        <Compile Include="UI\SDK\Components\Avatar.cs" />
+        <Compile Include="UI\SDK\Components\Background.cs" />
+        <Compile Include="UI\SDK\Components\Button.cs" />
+        <Compile Include="UI\SDK\Components\Horizontal.cs" />
+        <Compile Include="UI\SDK\Components\Image.cs" />
+        <Compile Include="UI\SDK\Components\Panel.cs" />
+        <Compile Include="UI\SDK\Components\Tab.cs" />
+        <Compile Include="UI\SDK\Components\TabSelector.cs" />
+        <Compile Include="UI\SDK\Components\Text.cs" />
+        <Compile Include="UI\SDK\Components\Vertical.cs" />
+        <Compile Include="UI\SDK\ParseContext.cs" />
+        <Compile Include="UI\SDK\ParseException.cs" />
+        <Compile Include="UI\SDK\Parser.cs" />
+        <Compile Include="UI\SDK\Patches\MainSettingsMenuViewControllersInstallerPatch.cs" />
+        <Compile Include="UI\SDK\Test.cs" />
+        <Compile Include="UI\SDK\NewView.cs" />
         <Compile Include="UI\StringList\StringList.cs" />
         <Compile Include="UI\StringList\StringListCell.cs" />
         <Compile Include="UI\UIManager.cs" />
@@ -331,6 +354,10 @@
         <EmbeddedResource Include="UI\Profile\ProfileView.bsml" />
         
         <EmbeddedResource Include="UI\Map\MapView.bsml" />
+
+        <!-- TEST -->
+        
+        <EmbeddedResource Include="UI\SDK\Test.bsml" />
 
     </ItemGroup>
 

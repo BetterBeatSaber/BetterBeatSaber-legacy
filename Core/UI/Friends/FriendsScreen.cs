@@ -11,7 +11,6 @@ using BetterBeatSaber.Core.Game.Enums;
 using BetterBeatSaber.Core.Manager;
 using BetterBeatSaber.Shared.Enums;
 using BetterBeatSaber.Shared.Models;
-using BetterBeatSaber.Shared.Network.Interfaces;
 
 using HMUI;
 
@@ -21,7 +20,7 @@ using UnityEngine;
 
 namespace BetterBeatSaber.Core.UI.Friends; 
 
-public sealed class FriendsScreen : FloatingView<FriendsScreen> {
+public sealed class FriendsScreen : FloatingView<FriendsScreen>, IRequireAuth {
 
     public override Vector2 ScreenSize { get; } = new(100f, 80f);
     
@@ -99,7 +98,7 @@ public sealed class FriendsScreen : FloatingView<FriendsScreen> {
 
     #endregion
 
-    public override void SaveConfig() => CoreConfig.Instance.Save();
+    public override void SaveConfig() => ConfigManager.Instance.SaveConfig(CoreConfig.Instance);
 
     private class FriendListTableData : CachedListData<Player, FriendListCell> {
 

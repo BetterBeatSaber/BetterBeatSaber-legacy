@@ -9,7 +9,7 @@ namespace BetterBeatSaber.Core.Config;
 
 public sealed class CoreConfig : Config<CoreConfig> {
 
-    public List<string> Modules { get; set; } = new();
+    public List<string> Modules { get; } = new();
     
     public bool CustomTitle { get; set; } = true;
     
