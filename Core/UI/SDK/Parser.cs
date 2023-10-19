@@ -14,7 +14,7 @@ using TypeExtensions = BetterBeatSaber.Core.Extensions.TypeExtensions;
 
 namespace BetterBeatSaber.Core.UI.SDK; 
 
-public class Parser : ConstructableSingleton<Parser> {
+public sealed class Parser : ConstructableSingleton<Parser> {
 
     public readonly Dictionary<string, Type> RegisteredComponents = new();
     
@@ -96,7 +96,7 @@ public class Parser : ConstructableSingleton<Parser> {
                 component.GameObject = gameObject;
 
             if (host != null) {
-                // todo: inject components based on id
+                // todo: inject components based on id and type if there is only one
                 // and register button/action handlers to component ...
             }
             

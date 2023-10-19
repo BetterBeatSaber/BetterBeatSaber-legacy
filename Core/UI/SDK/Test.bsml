@@ -2,21 +2,24 @@
 <Vertical PrefWidth="100">
     <TabSelector Id="Testerrr" />
     <Horizontal>
-        <Tab Name="Erster">
+        <Tab Name="Erster" For="Testerrr">
             <Vertical>
-                <Text Size="8">UwU</Text>
+                <Text Size="6">UwU</Text>
             </Vertical>
         </Tab>
     </Horizontal>
     <Horizontal>
-        <Tab Name="Zweiter">
+        <Tab Name="Zweiter" For="Testerrr">
             <Vertical>
                 <Text Size="8">UwU 2</Text>
             </Vertical>
         </Tab>
     </Horizontal>
     <Horizontal>
-        <Text Size="8">SEXXX</Text>
-        <Button>Fick mich</Button>
+        <Tab Name="Rawrrr" For="Testerrr">
+            <Vertical>
+                <Text Size="10">Rawrrr</Text>
+            </Vertical>
+        </Tab>
     </Horizontal>
 </Vertical>

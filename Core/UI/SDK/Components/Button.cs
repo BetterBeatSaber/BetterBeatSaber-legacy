@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Xml;
 
 using BeatSaberMarkupLanguage.Components;
@@ -7,6 +8,8 @@ using TMPro;
 
 using UnityEngine;
 using UnityEngine.UI;
+
+using Object = UnityEngine.Object;
 
 namespace BetterBeatSaber.Core.UI.SDK.Components; 
 
@@ -19,6 +22,8 @@ public class Button : Component {
     private TextMeshProUGUI? _text;
     
     public bool Primary { get; init; }
+
+    public event Action? OnClicked; 
 
     private bool _interactable = true;
     public bool Interactable {

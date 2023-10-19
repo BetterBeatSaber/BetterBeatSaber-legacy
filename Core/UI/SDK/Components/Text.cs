@@ -48,9 +48,10 @@ public class Text : Component {
         _textMesh = GameObject.AddComponent<TextMeshProUGUI>();
         
         _textMesh.font = BeatSaberMarkupLanguage.BeatSaberUI.MainTextFont;
-        var mf = typeof(BeatSaberUI).GetProperty("MainUIFontMaterial", BindingFlags.Static | BindingFlags.NonPublic)!
+        var mf = typeof(BeatSaberUI).GetProperty("MainUIFontMaterial", BindingFlags.Static | BindingFlags.NonPublic)?
             .GetValue(null);
-        _textMesh.fontSharedMaterial = (Material) mf;
+        if(mf != null)
+            _textMesh.fontSharedMaterial = (Material) mf;
         
         _textMesh.fontSize = _size;
         _textMesh.richText = _rich;

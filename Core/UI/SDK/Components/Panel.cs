@@ -23,7 +23,6 @@ public class Panel : Component, Component.IParent {
         var contentSizeFitter = GameObject.AddComponent<ContentSizeFitter>();
         contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         
-        
         GameObject.AddComponent<Backgroundable>();
 
         var rectTransform = GameObject.transform as RectTransform;

@@ -8,11 +8,34 @@ using UnityEngine;
 
 namespace BetterBeatSaber.Core.UI.SDK.Components; 
 
-public sealed class Tab : Background {
+public sealed class Tab : Background, Component.IParent {
 
-    public string? Name { get; set; } = nameof(Tab);
+    private string _name = nameof(Tab);
+
+    public string Name {
+        get => _name;
+        set {
+            var refresh = value != _name;
+            _name = value;
+            if (refresh)
+                Selector?.Refresh();
+        }
+    }
+
+    private bool _visible = true;
+
+    public bool Visible {
+        get => _visible;
+        set {
+            var refresh = value != _visible;
+            _visible = value;
+            if (refresh)
+                Selector?.Refresh();
+        }
+    }
     
-    public bool Visible { get; set; } = true;
+    [UsedImplicitly]
+    public string For { get; set; } = null!;
 
     [UsedImplicitly]
     [IgnoreProperty]

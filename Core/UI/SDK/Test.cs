@@ -10,5 +10,5 @@ public class Test : NewView {
     [UsedImplicitly]
     [Component(nameof(Text))]
     public Text Text { get; set; } = null!; 
-
+    
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Xml;
 
 using BetterBeatSaber.Core.Extensions;
-using BetterBeatSaber.Core.UI.SDK.Attributes;
 
 using HMUI;
 
@@ -22,14 +21,6 @@ public sealed class TabSelector : Component {
 
     private TextSegmentedControl? _textSegmentedControl;
     private TabSelectorBehaviour? _behaviour;
-    
-    [IgnoreProperty]
-    public List<Tab> Tabs { get; } = new();
-    
-    private readonly List<Tab> tabs = new();
-
-    private int _pageCount = -1;
-    private int _currentPage;
 
     public override GameObject Create(Transform parent, XmlNode node) {
         
@@ -56,113 +47,63 @@ public sealed class TabSelector : Component {
     }
 
     public override void PostCreation(ParseContext context) {
-
-        Tabs.Clear();
-        
-        foreach (var tab in context.GetComponentsByType<Tab>()) {
-            Tabs.Add(tab);
-            tab.Selector = this;
-        }
-        
-        Console.WriteLine("ADDED " + Tabs.Count);
-        
-        // Maybe add to left and to right buttons lols
-        https://github.com/monkeymanboy/BeatSaberMarkupLanguage/blob/master/BeatSaberMarkupLanguage/Components/TabSelector.cs#L41
-
-        Refresh();
-
-        if (_textSegmentedControl == null)
-            return;
-        
-        _textSegmentedControl.didSelectCellEvent -= TabSelected;
-        _textSegmentedControl.didSelectCellEvent += TabSelected;
-        
-        _textSegmentedControl.SelectCellWithNumber(0);
-        
-        TabSelected(_textSegmentedControl, 0);
-
-    }
-
-    public void Refresh() {
-        
-        var visibleTabs = tabs.Where(tab => tab.Visible).ToList();
-        if (PageCount == -1) {
-            SetSegmentedControlTexts(visibleTabs);
-        } else {
-            
-            if (_currentPage < 0)
-                _currentPage = 0;
-
-            if (_currentPage > (visibleTabs.Count - 1) / _pageCount)
-                _currentPage = (visibleTabs.Count - 1) / _pageCount;
-
-            SetSegmentedControlTexts(visibleTabs.Skip(PageCount * _currentPage).Take(PageCount).ToList());
-            
-            // Maybe add to left and to right buttons lols
-            // https://github.com/monkeymanboy/BeatSaberMarkupLanguage/blob/f6eceeabedcc83a762c7a7a66ddb26b63166bc74/BeatSaberMarkupLanguage/Components/TabSelector.cs#L105C1-L105C1
-
-            TabSelected(null, 0);
-            
-        }
-    }
-    
-    public int PageCount
-    {
-        get => _pageCount;
-        set
-        {
-            _pageCount = value;
-            if (tabs.Count > 0)
-            {
-                Refresh();
-            }
-        }
-    }
-
-    private void TabSelected(SegmentedControl? segmentedControl, int index) {
-       
-        if (PageCount != -1)
-            index += PageCount * _currentPage;
-
-        foreach (var tab in tabs)
-            // ReSharper disable once Unity.NoNullPropagation
-            tab.GameObject?.SetActive(false);
-
-        if (index >= tabs.Count(tab => tab.Visible))
-            return;
-
         // ReSharper disable once Unity.NoNullPropagation
-        tabs.Where(tab => tab.Visible).ElementAt(index).GameObject?.SetActive(true);
-        
+        _behaviour?.Init(this, context);
     }
 
-    private void SetSegmentedControlTexts(List<Tab> tabs) {
-        // ReSharper disable once Unity.NoNullPropagation
-        _textSegmentedControl?.SetTexts(tabs.Select(tab => tab.Name).ToArray());
-    }
-
-    private void PageLeft() {
-        _currentPage--;
-        Refresh();
-    }
-
-    private void PageRight() {
-        _currentPage++;
-        Refresh();
-    }
+    // ReSharper disable once Unity.NoNullPropagation
+    public void Refresh() => _behaviour?.Refresh();
 
     private sealed class TabSelectorBehaviour : MonoBehaviour {
 
-        public TabSelector? TabSelector { get; private set; }
+        private TabSelector? TabSelector { get; set; }
+
+        private readonly List<Tab> _tabs = new();
+
+        private int _pageCount = -1;
+        private int _currentPage;
 
         private bool _shouldRefresh;
-        
-        private void OnEnable() {
-            if (_shouldRefresh)
-                Refresh();
+
+        public int PageCount {
+            get => _pageCount;
+            set {
+                _pageCount = value;
+                if (_tabs.Count > 0) {
+                    Refresh();
+                }
+            }
         }
 
-        private void Refresh() {
+        public void Init(TabSelector tabSelector, ParseContext parseContext) {
+
+            TabSelector = tabSelector;
+            
+            _tabs.Clear();
+
+            foreach (var tab in parseContext.GetComponentsByType<Tab>().Where(tab => tab.For == tabSelector.Id)) {
+                _tabs.Add(tab);
+                tab.Selector = tabSelector;
+            }
+            
+            // Maybe add to left and to right buttons lols
+            https://github.com/monkeymanboy/BeatSaberMarkupLanguage/blob/master/BeatSaberMarkupLanguage/Components/TabSelector.cs#L41
+
+            Refresh();
+
+            if (TabSelector._textSegmentedControl == null)
+                return;
+            
+            TabSelector._textSegmentedControl.didSelectCellEvent -= TabSelected;
+            TabSelector._textSegmentedControl.didSelectCellEvent += TabSelected;
+            
+            TabSelector._textSegmentedControl.SelectCellWithNumber(0);
+            
+            TabSelected(TabSelector._textSegmentedControl, 0);
+            
+        }
+
+        public void Refresh() {
             
             if (!isActiveAndEnabled) {
                 _shouldRefresh = true;
@@ -170,9 +111,62 @@ public sealed class TabSelector : Component {
             }
 
             _shouldRefresh = false;
-
-            TabSelector?.Refresh();
             
+            var visibleTabs = _tabs.Where(tab => tab.Visible).ToList();
+            
+            if (PageCount == -1) {
+                SetSegmentedControlTexts(visibleTabs);
+            } else {
+                if (_currentPage < 0)
+                    _currentPage = 0;
+
+                if (_currentPage > (visibleTabs.Count - 1) / _pageCount)
+                    _currentPage = (visibleTabs.Count - 1) / _pageCount;
+
+                SetSegmentedControlTexts(visibleTabs.Skip(PageCount * _currentPage).Take(PageCount).ToList());
+
+                TabSelected(null, 0);
+                
+            }
+            
+        }
+
+        private void TabSelected(SegmentedControl? segmentedControl, int index) {
+            
+            if (PageCount != -1)
+                index += PageCount * _currentPage;
+
+            foreach (var tab in _tabs)
+                // ReSharper disable once Unity.NoNullPropagation
+                tab.GameObject?.SetActive(false);
+
+            if (index >= _tabs.Count(tab => tab.Visible))
+                return;
+
+            // ReSharper disable once Unity.NoNullPropagation
+            _tabs.Where(tab => tab.Visible).ElementAt(index).GameObject?.SetActive(true);
+            
+        }
+
+        private void SetSegmentedControlTexts(IEnumerable<Tab> tabs) {
+            // ReSharper disable once Unity.NoNullPropagation
+            TabSelector?._textSegmentedControl?.SetTexts(tabs.Select(tab => tab.Name).ToArray());
+        }
+
+        private void PageLeft() {
+            _currentPage--;
+            Refresh();
+        }
+
+        private void PageRight() {
+            _currentPage++;
+            Refresh();
+        }
+
+        private void OnEnable() {
+            if (_shouldRefresh) {
+                Refresh();
+            }
         }
         
     }
