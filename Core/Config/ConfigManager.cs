@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 
 using BetterBeatSaber.Core.Api;
 using BetterBeatSaber.Core.Config.Converters;
 using BetterBeatSaber.Core.Extensions;
 using BetterBeatSaber.Core.Game;
 using BetterBeatSaber.Core.Manager;
-using BetterBeatSaber.Core.Threading;
+using BetterBeatSaber.Core.Utilities;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -38,13 +38,42 @@ public sealed class ConfigManager : Manager<ConfigManager> {
     #region Init & Exit
     
     public override void Init() {
+        
         if (!Directory.Exists(ConfigsDirectory))
             Directory.CreateDirectory(ConfigsDirectory);
+        
+        AuthManager.Instance.OnAuthenticated += OnAuthenticated;
+        
     }
-    
+
+    public override void Exit() {
+        AuthManager.Instance.OnAuthenticated -= OnAuthenticated;
+    }
+
+    #endregion
+
+    #region Event Handlers
+
+    private void OnAuthenticated() {
+
+        while (!_uploadQueue.IsEmpty) {
+            if(_uploadQueue.TryDequeue(out var config))
+                ThreadDispatcher.Enqueue(SaveConfigToCloud(config));
+        }
+        
+        LoadConfigsFromCloud();
+        
+    }
+
     #endregion
 
     private readonly List<Config> _configs = new();
+
+    private readonly ConcurrentQueue<Config> _uploadQueue = new();
+    
+    #region Methods
+
+    #region Public
 
     public T? CreateConfig<T>(string id, bool saveLocal = false) where T : Config<T> {
         
@@ -69,18 +98,29 @@ public sealed class ConfigManager : Manager<ConfigManager> {
 
     public T? CreateConfig<T>(Module module) where T : Config<T> => CreateConfig<T>(module.Id, module.IsLocal);
 
+    #endregion
+
+    #region Private
+    
     internal void LoadConfig(Config config) {
         try {
             
-            var data = !config.SaveLocal ? DownloadConfig(config.Id) : (File.Exists(Path.Combine(ConfigsDirectory, $"{config.Id}.json")) ? File.ReadAllText(Path.Combine(ConfigsDirectory, $"{config.Id}.json")) : string.Empty);
-            
-            if (data.Length >= 2)
-                JsonConvert.PopulateObject(data, config, JsonSerializerSettings);
-            else
+            var path = Path.Combine(ConfigsDirectory, $"{config.Id}.json");
+            if (!File.Exists(path)) {
                 SaveConfig(config);
+                return;
+            }
+
+            var raw = File.ReadAllText(path);
+            if (raw.Length < 2) {
+                SaveConfig(config);
+                return;
+            }
+
+            PopulateConfig(config, raw, false);
             
         } catch (Exception exception) {
-            Logger.Error($"Failed to load Config for Module: {config.Id}");
+            Logger.Error("Failed to load Config for Module: {0}", config.Id);
             Logger.Error(exception);
         }
     }
@@ -88,10 +128,12 @@ public sealed class ConfigManager : Manager<ConfigManager> {
     internal void SaveConfig(Config config) {
         try {
             
-            if (!config.SaveLocal) {
-                UploadConfig(config.Id, JsonConvert.SerializeObject(config, JsonSerializerSettings));
+            File.WriteAllText(Path.Combine(ConfigsDirectory, $"{config.Id}.json"), JsonConvert.SerializeObject(config, JsonSerializerSettings));
+
+            if (AuthManager.Instance.IsAuthenticated) {
+                ThreadDispatcher.Enqueue(SaveConfigToCloud(config));
             } else {
-                File.WriteAllText(Path.Combine(ConfigsDirectory, $"{config.Id}.json"), JsonConvert.SerializeObject(config, JsonSerializerSettings));
+                _uploadQueue.Enqueue(config);
             }
             
         } catch (Exception exception) {
@@ -99,40 +141,62 @@ public sealed class ConfigManager : Manager<ConfigManager> {
             Logger.Error(exception);
         }
     }
-    
-    internal string DownloadConfig(string id) =>
-        AsyncHelper.RunSync(async () => await DownloadConfigAsync(id));
-    
-    internal async Task<string> DownloadConfigAsync(string id) {
+
+    private void LoadConfigsFromCloud() {
+
+        if (!CoreConfig.Instance.ConfigCloudSynchronization)
+            return;
         
-        var response = await ApiClient.Instance.GetRaw($"/configs/{id}");
-        if (response is not { IsSuccessStatusCode: true })
-            return string.Empty;
-        
-        return await response.Content.ReadAsStringAsync();
+        foreach (var config in _configs)
+            ThreadDispatcher.Enqueue(LoadConfigFromCloud(config));
         
     }
 
-    internal void UploadConfig(string id, string config) {
-        // ReSharper disable once AsyncVoidLambda
-        ThreadDispatcher.EnqueueOffMain(async () => await UploadConfigAsync(id, config));
+    // ReSharper disable once MemberCanBeMadeStatic.Local
+    private IEnumerator LoadConfigFromCloud(Config config) {
+
+        var request = new ApiRequest<string>($"/configs/{config.Id}") {
+            ResponseRaw = true
+        };
+
+        yield return request.Send();
+
+        if (request.Failed || request.Response == null || request.Response == null)
+            yield break;
+            
+        PopulateConfig(config, request.Response, true);
+        
     }
 
-    internal async Task<bool> UploadConfigAsync(string id, string config) {
+    private IEnumerator SaveConfigToCloud(Config config) {
         
-        var response = await ApiClient.Instance.PutRaw($"/configs/{id}", new StringContent(config, Encoding.UTF8, "application/json"));
-        if (response is not { IsSuccessStatusCode: true }) {
-            Logger.Info($"Failed to upload config: \"{id}\"");
-            return false;
+        var request = new ApiRequest<string>($"/configs/{config.Id}", "PUT") {
+            BodyRaw = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(config, JsonSerializerSettings)),
+            ContentType = "application/json; charset=utf-8"
+        };
+
+        yield return request.Send();
+        
+        if(!request.Failed)
+            Logger.Info("Uploaded config: {0}", config.Id);
+        else
+            Logger.Warn("Failed to upload config: {0}", config.Id);
+        
+    }
+
+    private void PopulateConfig(Config config, string raw, bool fromCloud) {
+        try {
+            JsonConvert.PopulateObject(raw, config, JsonSerializerSettings);
+            if (config is IConfigLoadedHandler handler)
+                handler.OnLoaded(fromCloud);
+        } catch (Exception exception) {
+            Logger.Error("Failed to load Config for Module: {0} ({1})", config.Id, fromCloud ? "Cloud" : "Local");
+            Logger.Error(exception);
         }
-        
-        Logger.Info($"Uploaded config: \"{id}\"");
-        
-        return true;
-        
     }
-
-    internal bool UploadConfigSync(string id, string config) =>
-        AsyncHelper.RunSync(async () => await UploadConfigAsync(id, config));
-
+    
+    #endregion
+    
+    #endregion
+    
 }

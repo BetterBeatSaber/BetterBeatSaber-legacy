@@ -37,12 +37,12 @@ public struct PresencePacket : IPlayerPacket {
         var status = reader.GetByte();
         if (status != 0) {
             Presence = (Status) status switch {
-                Status.Offline => reader.Get<OfflinePresence>(),
-                Status.InMenu => reader.Get<InMenuPresence>(),
-                Status.PlayingMap => reader.Get<PlayingMapPresence>(),
-                Status.PlayingTutorial => reader.Get<PlayingTutorialPresence>(),
-                Status.WatchingReplay => reader.Get<WatchingReplayPresence>(),
-                Status.Afk => reader.Get<AfkPresence>(),
+                Status.Offline => reader.Get<Presence.Offline>(),
+                Status.InMenu => reader.Get<Presence.InMenu>(),
+                Status.PlayingMap => reader.Get<Presence.PlayingMap>(),
+                Status.PlayingTutorial => reader.Get<Presence.PlayingTutorial>(),
+                Status.WatchingReplay => reader.Get<Presence.WatchingReplay>(),
+                Status.Afk => reader.Get<Presence.Afk>(),
                 _ => Presence
             };
         }

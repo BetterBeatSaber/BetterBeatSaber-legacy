@@ -1,4 +1,6 @@
-﻿using BetterBeatSaber.Server.Extensions;
+﻿using System.Runtime.CompilerServices.Extensions;
+
+using BetterBeatSaber.Server.Extensions;
 using BetterBeatSaber.Server.Leaderboards.BeatLeader.Interfaces;
 using BetterBeatSaber.Server.Leaderboards.BeatLeader.Models;
 using BetterBeatSaber.Shared.Enums;

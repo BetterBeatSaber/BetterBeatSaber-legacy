@@ -1,11 +1,12 @@
-﻿using BetterBeatSaber.Server.Models;
+﻿using BetterBeatSaber.Server.Interfaces;
+using BetterBeatSaber.Server.Models;
 
 using LiteNetLib;
 using LiteNetLib.Utils;
 
 namespace BetterBeatSaber.Server.Network.Interfaces; 
 
-public interface IServer {
+public interface IServer : IInitializable {
 
     public NetPacketProcessor PacketProcessor { get; }
     

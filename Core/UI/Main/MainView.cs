@@ -231,6 +231,8 @@ public sealed class MainView : View<MainView> {
 
         public override List<Player> Items => FriendManager.Instance.FriendRequests;
 
+        public override float ItemCellSize => 18f;
+
     }
 
 }

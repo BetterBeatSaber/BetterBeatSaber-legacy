@@ -66,7 +66,6 @@ public sealed class PlayerService : IPlayerService {
                 Name = playerSummary.Nickname,
                 AvatarUrl = playerSummary.AvatarFullUrl,
                 Role = PlayerRole.Player,
-                IsBanned = false,
                 LastUpdate = DateTime.Now
             };
 
@@ -95,14 +94,11 @@ public sealed class PlayerService : IPlayerService {
         return await _context.Players.FirstOrDefaultAsync(player => player.Id == platformId);
     }
 
-    public async Task<List<Player>> Search(string? name, int page = 0, int count = 50, bool banned = false) {
+    public async Task<List<Player>> Search(string? name, int page = 0, int count = 50) {
         
         var query = _context.Players.AsQueryable();
         if (name != null)
-            query = query.Where(p => p.Name.Contains(name) || p.Name == name);
-        
-        if (banned)
-            query = query.Where(p => p.IsBanned);
+            query = query.Where(player => player.Name.Contains(name) || player.Name == name);
         
         return await query.Skip(page * count)
                           .Take(count)

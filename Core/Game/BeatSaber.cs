@@ -1,13 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
-
-using BeatLeader.Replayer;
 
 using BetterBeatSaber.Core.Extensions;
 using BetterBeatSaber.Core.Game.Enums;
+using BetterBeatSaber.Core.Manager.Interop;
 using BetterBeatSaber.Core.Utilities;
 using BetterBeatSaber.Core.Zenject;
-using BetterBeatSaber.Shared.Enums;
 using BetterBeatSaber.Shared.Models;
 using BetterBeatSaber.Shared.Network.Enums;
 
@@ -26,7 +25,21 @@ namespace BetterBeatSaber.Core.Game;
 
 public class BeatSaber : UnitySingleton<BeatSaber> {
 
+    #region Directories
+
     public static string GameDirectory => Environment.CurrentDirectory;
+    
+    public static string ManagerDirectory => Path.Combine(GameDirectory, "Beat Saber_Data", "Managed");
+    public static string UserDataDirectory => Path.Combine(GameDirectory, "UserData");
+    public static string PluginsDirectory => Path.Combine(GameDirectory, "Plugins");
+    public static string LibrariesDirectory => Path.Combine(GameDirectory, "Libs");
+
+    public static string DataDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "Hyperbolic Magnetism", "Beat Saber");
+    
+    public static string CustomSabersDirectory => Path.Combine(GameDirectory, "CustomSabers");
+    public static string CustomNotesDirectory => Path.Combine(GameDirectory, "CustomNotes");
+
+    #endregion
     
     /// <summary>
     /// Current game version
@@ -38,11 +51,6 @@ public class BeatSaber : UnitySingleton<BeatSaber> {
     /// </summary>
     public static readonly bool InDesktopMode = Environment.GetCommandLineArgs().Contains("fpfc");
 
-    /// <summary>
-    /// Is in developer mode
-    /// </summary>
-    public static readonly bool EnableDeveloperMode = Environment.GetCommandLineArgs().Contains("--dev");
-    
     #region Variables
 
     /// <summary>
@@ -76,8 +84,6 @@ public class BeatSaber : UnitySingleton<BeatSaber> {
 
     #region Events
 
-    public static event Action? OnSoftRestart;
-    
     #region HMD
 
     /// <summary>
@@ -171,8 +177,18 @@ public class BeatSaber : UnitySingleton<BeatSaber> {
         ZenjectManager.Instance.OnInstall += OnZenjectInstall;
 
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
+
+        InteropManager.Instance.OnReplayStarted += (beatmap, replay) => {
+            _isReplay = true;
+            OnReplayStarted?.Invoke(beatmap, replay);
+        };
+
+        InteropManager.Instance.OnReplayEnded += (beatmap, replay) => {
+            _isReplay = false;
+            OnReplayFinished?.Invoke(beatmap, replay);
+        };
         
-        ReplayerLauncher.ReplayWasStartedEvent += data => {
+        /*ReplayerLauncher.ReplayWasStartedEvent += data => {
             _isReplay = true;
             OnReplayStarted?.Invoke(data.DifficultyBeatmap, new Replay {
                 Map = new Map {
@@ -206,7 +222,7 @@ public class BeatSaber : UnitySingleton<BeatSaber> {
                     AvatarUrl = data.MainReplay.ReplayData.Player?.avatar ?? "none"
                 }
             });
-        };
+        };*/
         
         if(!InDesktopMode)
             InvokeRepeating(nameof(CheckIfHmdIsImmersed), 1f, .5f);
@@ -285,13 +301,6 @@ public class BeatSaber : UnitySingleton<BeatSaber> {
 
     #endregion
 
-    #region Event Triggers
-
-    internal static void TriggerSoftRestartEvent() =>
-        OnSoftRestart?.Invoke();
-
-    #endregion
-    
     internal sealed class PlayerBinding : IInitializable, IDisposable {
 
         #region Data to be accessed

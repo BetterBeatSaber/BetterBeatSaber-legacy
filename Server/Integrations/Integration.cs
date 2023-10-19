@@ -1,4 +1,6 @@
-﻿using BetterBeatSaber.Server.Extensions;
+﻿using System.Runtime.CompilerServices.Extensions;
+
+using BetterBeatSaber.Server.Extensions;
 using BetterBeatSaber.Shared.Enums;
 
 using Newtonsoft.Json;

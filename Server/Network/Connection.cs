@@ -1,10 +1,12 @@
-﻿using BetterBeatSaber.Server.Models;
-using BetterBeatSaber.Server.Network.Interfaces;
+﻿using BetterBeatSaber.Server.Network.Interfaces;
+using BetterBeatSaber.Shared.Models;
 using BetterBeatSaber.Shared.Network.Interfaces;
 using BetterBeatSaber.Twitch.Shared.Enums;
 
 using LiteNetLib;
 using LiteNetLib.Utils;
+
+using Player = BetterBeatSaber.Server.Models.Player;
 
 namespace BetterBeatSaber.Server.Network; 
 
@@ -15,6 +17,8 @@ public sealed class Connection : IConnection {
 
     private readonly NetDataWriter _dataWriter = new();
 
+    public bool IsAuthenticated => _player != null;
+    
     private Player? _player;
     public Player Player {
         get => _player!;
@@ -27,7 +31,7 @@ public sealed class Connection : IConnection {
 
     public IPresence? Presence { get; set; }
     public IPresenceState? PresenceState { get; set; }
-    public ILobby? Lobby { get; set; }
+    public Lobby? Lobby { get; set; }
     
     public string? TwitchChannelId { get; set; }
     public string? TwitchChannelName { get; set; }
@@ -37,8 +41,6 @@ public sealed class Connection : IConnection {
         Server = server;
         Peer = peer;
     }
-
-    #region Methods
 
     public void Disconnect() => Peer.Disconnect();
 
@@ -51,11 +53,6 @@ public sealed class Connection : IConnection {
     public void SendPacketToFriends<T>(T packet, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableOrdered) where T : INetSerializable {
         foreach (var connection in FriendConnections)
             connection.SendPacket(packet, deliveryMethod);
-    }
-
-    #endregion
-
-    public void Dispose() {
     }
 
 }

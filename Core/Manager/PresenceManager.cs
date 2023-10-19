@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-
 using BetterBeatSaber.Core.Extensions;
 using BetterBeatSaber.Core.Game;
 using BetterBeatSaber.Core.Game.Enums;
@@ -9,20 +8,17 @@ using BetterBeatSaber.Core.Utilities;
 using BetterBeatSaber.Shared.Enums;
 using BetterBeatSaber.Shared.Models;
 using BetterBeatSaber.Shared.Network.Enums;
-using BetterBeatSaber.Shared.Network.Interfaces;
 using BetterBeatSaber.Shared.Network.Packets;
-
 using LiteNetLib;
-
 using UnityEngine;
 
 namespace BetterBeatSaber.Core.Manager; 
 
 public sealed class PresenceManager : UnitySingleton<PresenceManager> {
 
-    public IPresence PreviousPresence { get; private set; } = new OfflinePresence();
-    
-    private IPresence _presence = new InMenuPresence();
+    public IPresence PreviousPresence { get; private set; } = new Presence.Offline();
+
+    private IPresence _presence = new Presence.InMenu();
     public IPresence Presence {
         get => _presence;
         private set {
@@ -30,10 +26,10 @@ public sealed class PresenceManager : UnitySingleton<PresenceManager> {
             // ReSharper disable once ReplaceWithSingleAssignment.True
             var invokeChange = true;
 
-            if (_presence.Status == Shared.Enums.Status.InMenu && value.Status == Shared.Enums.Status.InMenu)
+            if (_presence.Status == Status.InMenu && value.Status == Status.InMenu)
                 invokeChange = false;
 
-            if(_presence.Status != Shared.Enums.Status.Afk)
+            if(_presence.Status != Status.Afk)
                 PreviousPresence = _presence;
                 
             _presence = value;
@@ -65,14 +61,11 @@ public sealed class PresenceManager : UnitySingleton<PresenceManager> {
         BeatSaber.OnLevelStarted += OnLevelStarted;
         BeatSaber.OnLevelEnded += OnLevelEnded;
 
-        BeatSaber.OnLevelPaused += OnLevelPaused;
-        BeatSaber.OnLevelUnpaused += OnLevelUnpaused;
-        
         BeatSaber.OnHmdEmerge += OnHmdEmerge;
         BeatSaber.OnHmdImmerse += OnHmdImmerse;
-        
-        Presence = new InMenuPresence();
-        
+
+        Presence = new Presence.InMenu();
+
     }
 
     private void OnDestroy() {
@@ -83,9 +76,6 @@ public sealed class PresenceManager : UnitySingleton<PresenceManager> {
         
         BeatSaber.OnLevelStarted -= OnLevelStarted;
         BeatSaber.OnLevelEnded -= OnLevelEnded;
-        
-        BeatSaber.OnLevelPaused -= OnLevelPaused;
-        BeatSaber.OnLevelUnpaused -= OnLevelUnpaused;
         
         BeatSaber.OnHmdEmerge -= OnHmdEmerge;
         BeatSaber.OnHmdImmerse -= OnHmdImmerse;
@@ -98,12 +88,12 @@ public sealed class PresenceManager : UnitySingleton<PresenceManager> {
 
     private void OnGenericSceneChanged(GenericScene scene) {
         if (scene == GenericScene.Menu)
-            Presence = new InMenuPresence();
+            Presence = new Presence.InMenu();
     }
     
     private void OnReplayStarted(IDifficultyBeatmap difficultyBeatmap, Replay replay) {
         difficultyBeatmap.GetBeatmapDataBasicInfoAsync().ContinueWith(x => {
-            Presence = new WatchingReplayPresence {
+            Presence = new Presence.WatchingReplay {
                 Map = replay.Map,
                 Difficulty = new DifficultyMap {
                     MapType = MapType.Custom,
@@ -120,8 +110,6 @@ public sealed class PresenceManager : UnitySingleton<PresenceManager> {
     
     private void OnLevelStarted(GameplayCoreSceneSetupData data) {
         
-        _previousPausedAt = DateTime.Now;
-
         _updatePlayingMapPresenceStateCoroutine = StartCoroutine(UpdatePlayingMapPresenceState());
 
         data.difficultyBeatmap.GetBeatmapDataBasicInfoAsync().ContinueWith(x => {
@@ -131,7 +119,7 @@ public sealed class PresenceManager : UnitySingleton<PresenceManager> {
 
             var mapType = data.difficultyBeatmap.GetMapType();
             
-            Presence = new PlayingMapPresence {
+            Presence = new Presence.PlayingMap {
                 Map = new Map {
                     Type = mapType,
                     Hash = mapType == MapType.Custom ? data.difficultyBeatmap.GetHash() : null,
@@ -158,27 +146,12 @@ public sealed class PresenceManager : UnitySingleton<PresenceManager> {
             StopCoroutine(_updatePlayingMapPresenceStateCoroutine);
     }
 
-    private DateTime? _previousPausedAt;
-    private DateTime? _pausedAt;
-    
-    private void OnLevelPaused() {
-        
-        if (Presence.Status != Shared.Enums.Status.PlayingMap || Presence is not PlayingMapPresence mapPresence)
-            return;
-        
-    }
-    
-    private void OnLevelUnpaused() {
-        if (Presence.Status == Shared.Enums.Status.PlayingMap && Presence is PlayingMapPresence mapPresence) {
-        }
-    }
-
     private void OnHmdImmerse() {
         Presence = PreviousPresence;
     }
 
     private void OnHmdEmerge() {
-        Presence = new AfkPresence();
+        Presence = new Presence.Afk();
     }
     
     #endregion

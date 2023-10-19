@@ -56,8 +56,6 @@ public sealed class Player : ISharedConvertable<Shared.Models.Player> {
 
     #endregion
     
-    public bool IsBanned { get; set; }
-    
     public DateTime LastUpdate { get; set; }
     
     #region Encryption

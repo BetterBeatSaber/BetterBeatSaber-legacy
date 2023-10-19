@@ -8,7 +8,7 @@ public interface IGithubService : IInitializable {
 
     public string LatestVersion { get; }
 
-    public Task<Release> GetLatestRelease();
+    public Task<Release?> GetLatestRelease();
     public Task<Release> GetRelease(string version);
 
 }

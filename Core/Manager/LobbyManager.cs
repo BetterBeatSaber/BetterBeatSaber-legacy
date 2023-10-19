@@ -22,7 +22,7 @@ public sealed class LobbyManager : Manager<LobbyManager> {
     public event Action<Lobby>? OnLobbyJoined;
     public event Action<Lobby>? OnLobbyLeft;
 
-    public event Action<Lobby, Player> OnLobbyPlayerActionReceived;
+    public event Action<Lobby, Player>? OnLobbyPlayerActionReceived;
     
     public event Action<Lobby, Player>? OnPlayerJoined;
     public event Action<Lobby, Player>? OnPlayerLeft;
@@ -107,9 +107,11 @@ public sealed class LobbyManager : Manager<LobbyManager> {
 
     #region Methods
 
-    public bool JoinLobby(string code) {
+    public bool JoinLobby(Lobby? lobby) => JoinLobby(lobby?.Code);
+    
+    public bool JoinLobby(string? code) {
 
-        if (Lobby != null)
+        if (code == null || Lobby != null)
             return false;
         
         return NetworkClient.Instance.SendPacket(new LobbyActionPacket {

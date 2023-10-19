@@ -3,11 +3,11 @@
 [Flags]
 public enum TokenType : byte {
 
-    All = Session | Integration | IntegrationState | TwitchTTS,
+    All = Session | Integration | IntegrationState | TwitchTextToSpeech,
     
     Session = 0x02,
     Integration = 0x04,
     IntegrationState = 0x08,
-    TwitchTTS = 0x16
+    TwitchTextToSpeech = 0x16
 
 }

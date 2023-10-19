@@ -1,5 +1,4 @@
-﻿using BetterBeatSaber.Server.Interfaces;
-using BetterBeatSaber.Server.Services.Interfaces;
+﻿using BetterBeatSaber.Server.Services.Interfaces;
 
 using JetBrains.Annotations;
 
@@ -20,14 +19,19 @@ public sealed class GithubService : IGithubService {
 
     public Task Init() => GetLatestRelease();
     
-    public async Task<Release> GetLatestRelease() {
-        
-        var release = await _gitHubClient.Repository.Release.GetLatest("BetterBeatSaber", "BetterBeatSaber");
-        
-        LatestVersion = release.Name;
-        
-        return release;
-        
+    public async Task<Release?> GetLatestRelease() {
+        try {
+            
+            var release = await _gitHubClient.Repository.Release.GetLatest("BetterBeatSaber", "BetterBeatSaber");
+
+            if(release != null)
+                LatestVersion = release.Name;
+
+            return release;
+            
+        } catch (Exception _) {
+            return null;
+        }
     }
 
     public async Task<Release> GetRelease(string version) {

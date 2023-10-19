@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Net;
+using System.Net.Sockets;
 
 using BetterBeatSaber.Core.Manager;
 using BetterBeatSaber.Core.Utilities;
 using BetterBeatSaber.Shared.Network.Packets;
-
-using IPA.Logging;
 
 using JetBrains.Annotations;
 
@@ -35,7 +34,7 @@ public sealed class NetworkClient : UnitySingleton<NetworkClient>, IDisposable {
     
     #endregion
 
-    private readonly Logger _logger;
+    private readonly BetterLogger _logger;
     
     private readonly EventBasedNetListener _listener;
     private readonly NetPacketProcessor _packetProcessor;
@@ -64,6 +63,8 @@ public sealed class NetworkClient : UnitySingleton<NetworkClient>, IDisposable {
 
         _logger = BetterBeatSaber.Logger.GetChildLogger("Network");
         
+        NetDebug.Logger = _logger;
+        
         _listener = new EventBasedNetListener();
         _packetProcessor = new NetPacketProcessor();
         _netManager = new NetManager(_listener) {
@@ -71,6 +72,7 @@ public sealed class NetworkClient : UnitySingleton<NetworkClient>, IDisposable {
             AutoRecycle = true
             #if DEBUG
             ,
+            BroadcastReceiveEnabled = true,
             SimulateLatency = true,
             SimulationMinLatency = 1,
             SimulationMaxLatency = 50
@@ -78,14 +80,27 @@ public sealed class NetworkClient : UnitySingleton<NetworkClient>, IDisposable {
         };
         _dataWriter = new NetDataWriter();
         
-        RegisterPacketHandler<ServerInfoPacket>(OnServerInfoPacketReceived);
+        RegisterPacketHandler<AuthResponsePacket>(OnAuthResponsePacketReceived);
+        
+        AuthManager.Instance.OnAuthenticated += OnAuthenticated;
         
     }
 
+    private void OnAuthenticated() =>
+        Connect();
+
     #region Packet Handlers
 
-    private void OnServerInfoPacketReceived(ServerInfoPacket packet) {
+    private void OnAuthResponsePacketReceived(AuthResponsePacket packet) {
         ServerName = packet.ServerName;
+        if (packet.Success) {
+            _logger.Info("Authenticated");
+        } else {
+            if(packet.Reason != null)
+                _logger.Warn("Failed to authenticate ({Reason})", packet.Reason);
+            else
+                _logger.Warn("Failed to authenticate");
+        }
     }
     
     #endregion
@@ -93,29 +108,23 @@ public sealed class NetworkClient : UnitySingleton<NetworkClient>, IDisposable {
     #region Unity Event Functions
 
     public void Start() {
-
         _listener.NetworkReceiveEvent += OnNetworkReceiveEvent;
         _listener.PeerConnectedEvent += OnPeerConnectedEvent;
         _listener.PeerDisconnectedEvent += OnPeerDisconnectedEvent;
-        
-        Connect();
-
-    }
-
-    private void Awake() {
-        Connect();
+        _listener.NetworkErrorEvent += OnNetworkErrorEvent;
     }
 
     private void OnDestroy() {
         
         Disconnect();
 
-        UnregisterPacketHandler<ServerInfoPacket>();
+        UnregisterPacketHandler<AuthResponsePacket>();
         
         _listener.NetworkReceiveEvent -= OnNetworkReceiveEvent;
         _listener.PeerConnectedEvent -= OnPeerConnectedEvent;
         _listener.PeerDisconnectedEvent -= OnPeerDisconnectedEvent;
-        
+        _listener.NetworkErrorEvent -= OnNetworkErrorEvent;
+
     }
     
     private void Update() {
@@ -134,13 +143,13 @@ public sealed class NetworkClient : UnitySingleton<NetworkClient>, IDisposable {
         
         _peer = peer;
         
+        _logger.Info("Connected ");
+        _logger.Info("Authenticating ...");
+        
         SendPacket(new AuthPacket {
-            Session = AuthManager.Instance.Token,
-            Version = BetterBeatSaber.Version.ToString()
+            Session = AuthManager.Instance.Token!
         });
 
-        _logger.Info("Connected to Server");
-        
         OnConnected?.Invoke();
 
     }
@@ -149,14 +158,14 @@ public sealed class NetworkClient : UnitySingleton<NetworkClient>, IDisposable {
         
         _peer = null;
         
-        _logger.Info("Disconnected from Server");
+        _logger.Info("Disconnected");
         
         if (!_shouldDisconnect && disconnectInfo.Reason != DisconnectReason.ConnectionRejected && _reconnectionAttempts < MaxReconnectionAttempts) {
             IsReconnecting = true;
             if (disconnectInfo.Reason != DisconnectReason.Reconnect) {
                 _reconnectionAttempts++;
                 _logger.Info("Trying to reconnect ...");
-                Connect();
+                Connect(true);
             }
         } else {
             IsReconnecting = false;
@@ -169,14 +178,20 @@ public sealed class NetworkClient : UnitySingleton<NetworkClient>, IDisposable {
         
     }
     
+    private void OnNetworkErrorEvent(IPEndPoint _, SocketError error) {
+        _logger.Warn("Network Error: {Error}", error.ToString());
+    }
+    
     #endregion
 
     #region Methods
     
-    public void Connect() {
+    public void Connect(bool isReconnect = false) {
 
-        if (_netManager.IsRunning)
+        if (!isReconnect && _netManager.IsRunning)
             return;
+        
+        _logger.Info("Connecting ...");
         
         _netManager.Start();
         _netManager.Connect(Ip, Port, Key);

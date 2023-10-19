@@ -1,0 +1,23 @@
+﻿<vertical child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <horizontal min-width='120' min-height='70' horizontal-fit='PreferredSize'>
+        <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
+            <horizontal pref-width='90'>
+
+                <horizontal pref-width='90'>
+                    <text id='Name' font-size='5' bold='true' align='Center' />
+                </horizontal>
+                
+                <string-setting text='Custom Name' value='CustomName' apply-on-change='true' />
+
+                <dropdown-list-setting text='Language' on-change='OnChangeLanguage' apply-on-change='true' options='Languages' value='CustomLanguage' />
+                <dropdown-list-setting id='Voice' text='Voice' apply-on-change='true' options='Voices' value='CustomVoice' />
+
+                <slider-setting text='Rate' min='-100' max='100' increment='5' value='CustomRate' apply-on-change='true' />
+                <slider-setting text='Pitch' min='-50' max='50' increment='5' value='CustomPitch' apply-on-change='true' />
+
+                <slider-setting text='Volume' min='0' max='200' increment='5' value='CustomVolume' apply-on-change='true' />
+            
+            </horizontal>
+        </vertical>
+    </horizontal>
+</vertical>

@@ -1,7 +1,8 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 
 using BetterBeatSaber.Core.Manager;
-using BetterBeatSaber.Core.Threading;
+using BetterBeatSaber.Core.UI.Components;
+using BetterBeatSaber.Core.Utilities;
 using BetterBeatSaber.Shared.Models;
 
 using JetBrains.Annotations;
@@ -16,6 +17,10 @@ namespace BetterBeatSaber.Core.UI.Main;
 
 public sealed class FriendRequestCell : ListCell<Player> {
 
+    [UsedImplicitly]
+    [UIComponent(nameof(Avatar))]
+    public readonly AvatarComponent Avatar = null!;
+    
     [UsedImplicitly]
     [UIComponent(nameof(Name))]
     public readonly TMP_Text Name = null!;
@@ -33,6 +38,7 @@ public sealed class FriendRequestCell : ListCell<Player> {
     public override void Populate(Player player) {
         _player = player;
         Name.text = player.Name;
+        Avatar.SetPlayer(player);
     }
 
     private void SetButtons(bool state) {

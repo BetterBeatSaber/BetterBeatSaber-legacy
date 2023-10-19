@@ -3,7 +3,7 @@
 using BeatSaberMarkupLanguage.Tags;
 
 using BetterBeatSaber.Core.Manager;
-using BetterBeatSaber.Core.Threading;
+using BetterBeatSaber.Core.Utilities;
 using BetterBeatSaber.Shared.Models;
 
 using HMUI;

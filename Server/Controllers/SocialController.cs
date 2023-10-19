@@ -8,6 +8,7 @@ using Player = BetterBeatSaber.Shared.Models.Player;
 
 namespace BetterBeatSaber.Server.Controllers; 
 
+[Route("social")]
 [ApiController]
 [Authorize]
 public sealed class SocialController : Controller {

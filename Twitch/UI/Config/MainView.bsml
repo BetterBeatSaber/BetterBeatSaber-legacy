@@ -1,0 +1,19 @@
+﻿<vertical child-control-height='false' pref-width='100' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='- https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+    <tab-selector tab-tag='tabs' />
+    <horizontal>
+        <tab tab-name='Settings' tags='tabs'>
+            <vertical child-control-height='false' vertical-fit='PreferredSize'>
+                <horizontal pref-height='75' pref-width='80' pad-top='5' pad-bottom='2'>
+                    <text text='Soon Cool ...' />
+                </horizontal>
+            </vertical>
+        </tab>
+        <tab tab-name='Users' tags='tabs'>
+            <vertical child-control-height='false' vertical-fit='PreferredSize'>
+                <horizontal pref-height='75' pref-width='80' pad-top='5' pad-bottom='2'>
+                    <list id='UserList' select-cell='SelectUser' stick-scrolling='true' show-scrollbar='true' />
+                </horizontal>
+            </vertical>
+        </tab>
+    </horizontal>
+</vertical>

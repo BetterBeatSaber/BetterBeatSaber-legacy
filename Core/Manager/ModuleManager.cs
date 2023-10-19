@@ -9,13 +9,11 @@ using BetterBeatSaber.Core.Api;
 using BetterBeatSaber.Core.Config;
 using BetterBeatSaber.Core.Extensions;
 using BetterBeatSaber.Core.Game;
+using BetterBeatSaber.Core.Network;
 using BetterBeatSaber.Shared.Models;
-
-using IPA.Logging;
+using BetterBeatSaber.Shared.Network.Packets;
 
 using Newtonsoft.Json;
-
-using UnityEngine;
 
 namespace BetterBeatSaber.Core.Manager; 
 
@@ -66,11 +64,19 @@ public sealed class ModuleManager : Manager<ModuleManager> {
         foreach (var module in Modules)
             InitModule(module);
 
+        #if DEBUG
+        NetworkClient.Instance.RegisterPacketHandler<ModuleDevelopmentPacket>(OnModuleDevelopmentPacketReceived);
+        #endif
+        
         State = LoadState.Initialized;
 
     }
 
     public override void Exit() {
+        
+        #if DEBUG
+        NetworkClient.Instance.UnregisterPacketHandler<ModuleDevelopmentPacket>();
+        #endif
         
         foreach (var module in Modules)
             ExitModule(module);
@@ -166,11 +172,13 @@ public sealed class ModuleManager : Manager<ModuleManager> {
 
     internal async Task<Module?> Install(string id) {
 
+        #if !DEBUG
         if (_moduleCache.TryGetValue(id, out var module)) {
             Modules.Add(module);
             RunModule(module);
             goto addToConfig;
         }
+        #endif
 
         var manifest = await LoadManifest(id);
         if (manifest == null)
@@ -181,12 +189,17 @@ public sealed class ModuleManager : Manager<ModuleManager> {
             return null;
 
         var assembly = Assembly.Load(rawAssembly);
-        
-        module = ConstructAndRunModule(manifest, assembly, false);
+
+        #if DEBUG
+        var
+        #endif
+            module = ConstructAndRunModule(manifest, assembly, false);
         
         #region Add to Config
 
+        #if !DEBUG
         addToConfig:
+        #endif
 
         if (CoreConfig.Instance.Modules.Contains(id))
             return module;
@@ -346,6 +359,13 @@ public sealed class ModuleManager : Manager<ModuleManager> {
     #endregion
 
     #endregion
+    
+    #if DEBUG
+    private void OnModuleDevelopmentPacketReceived(ModuleDevelopmentPacket packet) {
+        Uninstall(packet.ModuleId);
+        AsyncHelper.RunSync(async () => await Install(packet.ModuleId));
+    }
+    #endif
     
     public static async Task<IEnumerable<ModuleManifest>> FetchAvailableModules() =>
         await ApiClient.Instance.Get<List<ModuleManifest>>($"/versions/{BetterBeatSaber.Version}/modules") ?? Enumerable.Empty<ModuleManifest>();

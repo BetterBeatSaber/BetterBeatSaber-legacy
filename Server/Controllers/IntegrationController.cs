@@ -1,5 +1,4 @@
-﻿using BetterBeatSaber.Server.Extensions;
-using BetterBeatSaber.Server.Models;
+﻿using BetterBeatSaber.Server.Models;
 using BetterBeatSaber.Server.Services.Enums;
 using BetterBeatSaber.Server.Services.Interfaces;
 using BetterBeatSaber.Shared.Enums;
@@ -13,35 +12,33 @@ namespace BetterBeatSaber.Server.Controllers;
 [ApiController]
 public sealed class IntegrationController : Controller {
 
-    // TODO: Implement networking for live update and so UI for it lol
-    
     private readonly IIntegrationService _integrationService;
     private readonly IPlayerService _playerService;
     private readonly ITokenService _tokenService;
 
     public IntegrationController(IIntegrationService integrationService, IPlayerService playerService, ITokenService tokenService) {
-        _integrationService = integrationService;
-        _playerService = playerService;
-        _tokenService = tokenService;
+        this._integrationService = integrationService;
+        this._playerService = playerService;
+        this._tokenService = tokenService;
     }
+
+    // TODO: Implement networking for live update and so UI for it lol
 
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<List<Shared.Models.Integration>>> GetAll() {
+    public async Task<ActionResult<IEnumerable<PlayerIntegration>>> GetAll() {
         
         var player = await _playerService.GetFromHttpContext(HttpContext);
         if (player == null)
             return Unauthorized();
 
-        return await _integrationService
-                     .GetIntegrations(player)
-                     .ToSharedModelList<Shared.Models.Integration, PlayerIntegration>();
+        return Ok(await _integrationService.GetIntegrations(player));
 
     }
 
     [Authorize]
     [HttpGet("{integrationType}")]
-    public async Task<ActionResult<Shared.Models.Integration>> Get([FromRoute] IntegrationType integrationType) {
+    public async Task<ActionResult<PlayerIntegration>> Get([FromRoute] IntegrationType integrationType) {
 
         var player = await _playerService.GetFromHttpContext(HttpContext);
         if (player == null)
@@ -49,9 +46,7 @@ public sealed class IntegrationController : Controller {
         
         var integration = await _integrationService.GetIntegration(player, integrationType);
         
-        return integration != null ?
-            integration.ToSharedModel() :
-            NotFound();
+        return integration != null ? integration : NotFound();
         
     }
     
@@ -75,9 +70,7 @@ public sealed class IntegrationController : Controller {
         if (player == null)
             return Unauthorized();
 
-        return await _integrationService.RemoveIntegration(player, integrationType) ?
-            Ok() :
-            NotFound();
+        return await _integrationService.RemoveIntegration(player, integrationType) ? Ok() : NotFound();
 
     }
 

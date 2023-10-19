@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,16 +15,9 @@ using UnityEngine.UI;
 
 namespace BetterBeatSaber.Core.Manager; 
 
-// TODO: Fetch friend avatars
-
 public sealed class PlayerManager : Manager<PlayerManager> {
 
-    #region Fields & Properties
-
-    private readonly Dictionary<ulong, Player> _playerCache = new();
     private readonly Dictionary<ulong, Sprite> _avatarCache = new();
-
-    #endregion
 
     #region Methods
 
@@ -43,9 +35,11 @@ public sealed class PlayerManager : Manager<PlayerManager> {
     }
 
     public PlayerRelationship GetRelationshipWith(Player player) {
-        
+
+        #if !DEBUG
         if (player.Id == AuthManager.Instance.CurrentPlayer.Id)
             return PlayerRelationship.Self;
+        #endif
 
         if (FriendManager.Instance.IsFriend(player))
             return PlayerRelationship.Friend;
@@ -88,7 +82,9 @@ public sealed class PlayerManager : Manager<PlayerManager> {
         yield return request.SendWebRequest();
         
         if (request.isNetworkError || request.isHttpError)
-            Console.WriteLine("Failed to fetch avatar: " + request.error);
+            Logger.Warn("Failed to fetch avatar: {0}", request.error);
+        else
+            Logger.Debug("Fetched avatar for {0}", player.Name);
         
         _avatarCache.Add(player.Id, Sprite.Create(handler.texture, new Rect(0, 0, handler.texture.width, handler.texture.height), new Vector2(.5f, .5f)));
         

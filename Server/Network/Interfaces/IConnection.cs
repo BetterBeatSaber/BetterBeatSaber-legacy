@@ -1,13 +1,15 @@
-﻿using BetterBeatSaber.Server.Models;
+﻿using BetterBeatSaber.Shared.Models;
 using BetterBeatSaber.Shared.Network.Interfaces;
 using BetterBeatSaber.Twitch.Shared.Enums;
 
 using LiteNetLib;
 using LiteNetLib.Utils;
 
+using Player = BetterBeatSaber.Server.Models.Player;
+
 namespace BetterBeatSaber.Server.Network.Interfaces; 
 
-public interface IConnection : IDisposable {
+public interface IConnection {
 
     public IServer Server { get; }
     public NetPeer Peer { get; }
@@ -19,7 +21,7 @@ public interface IConnection : IDisposable {
 
     public IPresence? Presence { get; }
     public IPresenceState? PresenceState { get; }
-    public ILobby? Lobby { get; }
+    public Lobby? Lobby { get; }
     
     public string? TwitchChannelId { get; set; }
     public string? TwitchChannelName { get; set; }

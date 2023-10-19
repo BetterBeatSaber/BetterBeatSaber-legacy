@@ -1,13 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.CompilerServices.Extensions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 using BetterBeatSaber.Core.Extensions;
+using BetterBeatSaber.Core.Manager;
 using BetterBeatSaber.Core.Utilities;
 
 using Newtonsoft.Json;
+
+using UnityEngine.Networking;
 
 namespace BetterBeatSaber.Core.Api;
 
@@ -18,11 +23,11 @@ public sealed class ApiClient : ConstructableSingleton<ApiClient> {
     public HttpClient HttpClient { get; private set; } = new();
     
     #if STAGING
-    private const string APIUrl = "https://staging.betterbs.xyz";
+    internal const string APIUrl = "https://staging.betterbs.xyz";
     #elif DEBUG
-    private const string APIUrl = "http://localhost:5295";
+    internal const string APIUrl = "http://localhost:5295";
     #else
-    private const string APIUrl = "https://betterbs.xyz";
+    internal const string APIUrl = "https://betterbs.xyz";
     #endif
     
     #region Get
@@ -69,5 +74,8 @@ public sealed class ApiClient : ConstructableSingleton<ApiClient> {
         await HttpClient.DeleteAsync($"{APIUrl}{path}", cancellationToken ?? HttpContentExtensions.DefaultCancellationToken);
 
     #endregion
-    
+
+    internal static string BuildUrl(string path, Dictionary<string, string>? query = null) =>
+        APIUrl + path + query.BuildQueryString();
+
 }

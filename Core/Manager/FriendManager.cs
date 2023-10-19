@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using BetterBeatSaber.Core.Api;
 using BetterBeatSaber.Core.Network;
+using BetterBeatSaber.Core.Utilities;
 using BetterBeatSaber.Shared.Enums;
 using BetterBeatSaber.Shared.Models;
 using BetterBeatSaber.Shared.Network.Interfaces;
@@ -17,18 +19,19 @@ namespace BetterBeatSaber.Core.Manager;
 public sealed class FriendManager : Manager<FriendManager> {
 
     public event Action<Player, FriendRelationship>? OnFriendRelationshipChanged;
-    public event Action<Player, IPresence?, ILobby?>? OnFriendStatusUpdated;
-    public event Action<Player, IPresence?>? OnFriendPresenceUpdated;
+    public event Action<Player, IPresence?>? OnFriendStatusUpdated;
     public event Action<Player, IPresenceState?>? OnFriendPresenceStateUpdated;
-    public event Action<Player, ILobby?>? OnFriendLobbyUpdated;
+    public event Action<Player, Lobby?>? OnFriendLobbyUpdated;
     
     public List<Player> Friends { get; private set; } = new();
     public List<Player> FriendRequests { get; private set; } = new();
     public List<Player> SentFriendRequests { get; private set; } = new();
 
-    public Dictionary<ulong, IPresence?> FriendPresences { get; private set; } = new();
-    public Dictionary<ulong, IPresenceState?> FriendPresenceStates { get; private set; } = new();
-    public Dictionary<ulong, ILobby?> FriendLobbies { get; private set; } = new();
+    public bool IsLoading { get; private set; } = true;
+    
+    public Dictionary<ulong, IPresence?> FriendPresences { get; } = new();
+    public Dictionary<ulong, IPresenceState?> FriendPresenceStates { get; } = new();
+    public Dictionary<ulong, Lobby?> FriendLobbies { get; } = new();
 
     #region Init & Exit
 
@@ -39,22 +42,48 @@ public sealed class FriendManager : Manager<FriendManager> {
         NetworkClient.Instance.RegisterPacketHandler<PresenceStatePacket>(OnPresenceStatePacketReceived);
         //NetworkClient.Instance.RegisterPacketHandler<LobbyPacket>(OnLobbyPacketReceived);
         
-        AsyncHelper.RunSync(FetchFriends);
-        AsyncHelper.RunSync(FetchFriendRequests);
-        AsyncHelper.RunSync(FetchSentFriendRequests);
+        AuthManager.Instance.OnAuthenticated += OnAuthenticated;
 
     }
 
     public override void Exit() {
+        
+        AuthManager.Instance.OnAuthenticated -= OnAuthenticated;
+        
         NetworkClient.Instance.UnregisterPacketHandler<FriendRelationshipPacket>();
         NetworkClient.Instance.UnregisterPacketHandler<PresencePacket>();
         //NetworkClient.Instance.UnregisterPacketHandler<LobbyPacket>();
+        
     }
-    
+
+    // Maybe Combine to one Request?
+    private IEnumerator Fetch() {
+
+        IsLoading = true;
+        
+        var request = new ApiRequest<List<Player>>("/friends");
+        yield return request.Send();
+        Friends = request.Response ?? Enumerable.Empty<Player>().ToList();
+        
+        request = new ApiRequest<List<Player>>("/friends/requests");
+        yield return request.Send();
+        FriendRequests = request.Response ?? Enumerable.Empty<Player>().ToList();
+
+        request = new ApiRequest<List<Player>>("/friends/requests/sent");
+        yield return request.Send();
+        SentFriendRequests = request.Response ?? Enumerable.Empty<Player>().ToList();
+
+        IsLoading = false;
+
+    }
+
     #endregion
 
     #region Event Handlers
 
+    private void OnAuthenticated() =>
+        ThreadDispatcher.Enqueue(Fetch());
+    
     private void OnFriendRelationshipPacketReceived(FriendRelationshipPacket packet) {
         
         // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
@@ -87,8 +116,7 @@ public sealed class FriendManager : Manager<FriendManager> {
 
         FriendPresences[packet.Player.Value.Id] = packet.Presence;
         
-        OnFriendPresenceUpdated?.Invoke(packet.Player.Value, packet.Presence);
-        OnFriendStatusUpdated?.Invoke(packet.Player.Value, packet.Presence, GetFriendLobby(packet.Player.Value));
+        OnFriendStatusUpdated?.Invoke(packet.Player.Value, packet.Presence);
         
     }
     
@@ -122,8 +150,6 @@ public sealed class FriendManager : Manager<FriendManager> {
 
     #region Methods
 
-    #region Public
-
     public bool IsFriend(Player player) =>
         Friends.Any(friend => friend.Id == player.Id);
 
@@ -149,7 +175,7 @@ public sealed class FriendManager : Manager<FriendManager> {
     public async Task<bool> SendRequest(Player player) {
        
         var response = await ApiClient.Instance.Post($"/friends/{player.Id}");
-        if (!response.IsSuccessStatusCode)
+        if (response is not { IsSuccessStatusCode: true })
             return false;
         
         SentFriendRequests.Add(player);
@@ -161,7 +187,7 @@ public sealed class FriendManager : Manager<FriendManager> {
     public async Task<bool> AcceptRequest(Player player) {
         
         var response = await ApiClient.Instance.Post($"/friends/{player.Id}");
-        if (!response.IsSuccessStatusCode)
+        if (response is not { IsSuccessStatusCode: true })
             return false;
 
         FriendRequests.Remove(player);
@@ -176,7 +202,7 @@ public sealed class FriendManager : Manager<FriendManager> {
     public async Task<bool> DeclineRequest(Player player) {
         
         var response = await ApiClient.Instance.DeleteRaw($"/friends/{player.Id}");
-        if (!response.IsSuccessStatusCode)
+        if (response is not { IsSuccessStatusCode: true })
             return false;
 
         FriendRequests.Remove(player);
@@ -189,7 +215,7 @@ public sealed class FriendManager : Manager<FriendManager> {
     public async Task<bool> WithdrawRequest(Player player) {
         
         var response = await ApiClient.Instance.DeleteRaw($"/friends/{player.Id}");
-        if (!response.IsSuccessStatusCode)
+        if (response is not { IsSuccessStatusCode: true })
             return false;
 
         SentFriendRequests.Remove(player);
@@ -199,41 +225,14 @@ public sealed class FriendManager : Manager<FriendManager> {
         
     }
     
-    public IPresence? GetFriendPresence(Player player) {
-        return FriendPresences.TryGetValue(player.Id, out var presence) ? presence : null;
-    }
+    public IPresence? GetFriendPresence(Player player) =>
+        FriendPresences.TryGetValue(player.Id, out var presence) ? presence : null;
     
-    public IPresenceState? GetFriendPresenceState(Player player) {
-        return FriendPresenceStates.TryGetValue(player.Id, out var presenceState) ? presenceState : null;
-    }
+    public IPresenceState? GetFriendPresenceState(Player player) =>
+        FriendPresenceStates.TryGetValue(player.Id, out var presenceState) ? presenceState : null;
 
-    public ILobby? GetFriendLobby(Player player) {
-        return FriendLobbies.TryGetValue(player.Id, out var lobby) ? lobby : null;
-    }
-    
-    #endregion
-
-    #region Private
-
-    private async Task FetchFriends() {
-        var friends = await ApiClient.Instance.Get<List<Player>>("/friends");
-        if (friends != null)
-            Friends = friends;
-    }
-
-    private async Task FetchFriendRequests() {
-        var friendRequests = await ApiClient.Instance.Get<List<Player>>("/friends/requests");
-        if (friendRequests != null)
-            FriendRequests = friendRequests;
-    }
-    
-    private async Task FetchSentFriendRequests() {
-        var sentFriendRequests = await ApiClient.Instance.Get<List<Player>>("/friends/requests/sent");
-        if (sentFriendRequests != null)
-            SentFriendRequests = sentFriendRequests;
-    }
-
-    #endregion
+    public Lobby? GetFriendLobby(Player player) =>
+        FriendLobbies.TryGetValue(player.Id, out var lobby) ? lobby : null;
     
     #endregion
 

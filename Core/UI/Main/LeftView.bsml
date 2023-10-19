@@ -32,10 +32,5 @@
                 </horizontal>
             </vertical>
         </tab>
-        <tab tab-name='Integrations' tags='tabs'>
-            <vertical bg='round-rect-panel' vertical-fit='PreferredSize' pad='5'>
-                <list id='IntegrationList' />
-            </vertical>
-        </tab>
     </horizontal>
 </vertical>

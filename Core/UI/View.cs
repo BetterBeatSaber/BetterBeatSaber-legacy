@@ -1,4 +1,5 @@
-﻿using BeatSaberMarkupLanguage.ViewControllers;
+﻿using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.ViewControllers;
 
 using BetterBeatSaber.Core.Extensions;
 
@@ -6,13 +7,7 @@ using UnityEngine;
 
 namespace BetterBeatSaber.Core.UI;
 
-public abstract class View
-#if DEBUG
-: BSMLAutomaticViewController
-#else
-: BSMLViewController
-#endif
-{
+public abstract class View : BSMLViewController {
 
     protected const string PostParseEvent = "#post-parse";
     
@@ -38,19 +33,12 @@ public abstract class View
                 break;
         }
     }
-    
-    protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling) {
-        
-        base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
 
-        if (!removedFromHierarchy)
-            return;
-
-        OnDeactivate();
-        
+    #if DEBUG // To catch any exceptions
+    protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
+        BSMLParser.instance.Parse(Content, gameObject, this);
     }
-    
-    protected virtual void OnDeactivate() {}
+    #endif
 
     public interface IPostParseEventHandler {
 
@@ -77,8 +65,6 @@ public abstract class View<T> : View where T : View<T> {
         if (!removedFromHierarchy)
             return;
 
-        OnDeactivate();
-        
         Instance = null;
 
     }

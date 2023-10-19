@@ -3,10 +3,9 @@ using BeatSaberMarkupLanguage.Attributes;
 
 using BetterBeatSaber.Core.Extensions;
 using BetterBeatSaber.Core.Manager;
-using BetterBeatSaber.Core.Manager.Interop;
 using BetterBeatSaber.Core.TextMeshPro;
-using BetterBeatSaber.Core.Threading;
 using BetterBeatSaber.Core.UI.Components;
+using BetterBeatSaber.Core.Utilities;
 using BetterBeatSaber.Shared.Enums;
 using BetterBeatSaber.Shared.Models;
 using BetterBeatSaber.Shared.Network.Interfaces;
@@ -94,7 +93,7 @@ public sealed class ProfileView : View<ProfileView> {
     private PlayerRelationship _relationship;
 
     private IPresence? _presence;
-    private ILobby? _lobby;
+    private Shared.Models.Lobby? _lobby;
 
     public void Populate(Player? player) {
 
@@ -106,7 +105,7 @@ public sealed class ProfileView : View<ProfileView> {
         UpdateB();
         
         FriendManager.Instance.OnFriendRelationshipChanged += OnFriendRelationshipChanged;
-        FriendManager.Instance.OnFriendPresenceUpdated += OnFriendPresenceUpdated;
+        FriendManager.Instance.OnFriendStatusUpdated += OnFriendStatusUpdated;
         FriendManager.Instance.OnFriendLobbyUpdated += OnFriendLobbyUpdated;
         FriendManager.Instance.OnFriendPresenceStateUpdated += OnFriendPresenceStateUpdated;
         
@@ -127,7 +126,7 @@ public sealed class ProfileView : View<ProfileView> {
         UpdateB();
     }
     
-    private void OnFriendPresenceUpdated(Player player, IPresence? presence) {
+    private void OnFriendStatusUpdated(Player player, IPresence? presence) {
         if (player.Id == _player.Id)
             UpdateStatus(presence);
     }
@@ -137,7 +136,7 @@ public sealed class ProfileView : View<ProfileView> {
             UpdatePresenceState(presenceState);
     }
 
-    private void OnFriendLobbyUpdated(Player player, ILobby? lobby) {
+    private void OnFriendLobbyUpdated(Player player, Shared.Models.Lobby? lobby) {
         if (player.Id == _player.Id)
             UpdateLobby(lobby);
     }
@@ -183,7 +182,7 @@ public sealed class ProfileView : View<ProfileView> {
         if (_relationship == PlayerRelationship.ReceivedRequest) {
             // TODO: Block player
         } else if (_relationship == PlayerRelationship.Friend && _lobby != null) {
-            InteropManager.Instance.JoinLobby(_lobby);
+            LobbyManager.Instance.JoinLobby(_lobby);
         }
     }
     
@@ -254,17 +253,18 @@ public sealed class ProfileView : View<ProfileView> {
         _presence = presence;
         
         UpdateStatusText();
+
+        SetActiveIf(MapSection.gameObject, presence is IPresence.IMap);
         
-        SetActiveIf(MapSection.gameObject, presence is IMapPresence);
-        
-        if (presence is not IMapPresence mapPresence)
+        if (presence is not IPresence.IMap mapPresence)
             return;
         
         MapName.text = $"{mapPresence.Map.SongAuthor} - {mapPresence.Map.SongName} ({mapPresence.Map.LevelAuthor})";
-        MapDetails.text = $"{mapPresence.Difficulty.Difficulty.ToString()} | {mapPresence.Difficulty.NotesPerSecond:0.00} NPS | {mapPresence.Difficulty.NoteJumpSpeed:0.0} NJS";
+        
+        MapDetails.text = $"{mapPresence.Difficulty.ToString()} | {mapPresence.Difficulty.NotesPerSecond:0.00} NPS | {mapPresence.Difficulty.NoteJumpSpeed:0.0} NJS";
         //MapRankedInfo.text = "RANKEDDDD";
 
-        if (mapPresence is WatchingReplayPresence watchingReplayPresence)
+        if (presence is Presence.WatchingReplay watchingReplayPresence)
             MapPlayerState.text = $"Replay of {watchingReplayPresence.User.Name}";
 
         ThreadDispatcher.Enqueue(MapManager.Instance.DownloadMapCoverAndApply(mapPresence.Map.Hash, MapCover));
@@ -280,7 +280,7 @@ public sealed class ProfileView : View<ProfileView> {
         }
     }
 
-    private void UpdateLobby(ILobby? lobby) {
+    private void UpdateLobby(Shared.Models.Lobby? lobby) {
         _lobby = lobby;
         UpdateStatusText();
         UpdateB();

@@ -1,5 +1,4 @@
 ﻿using BetterBeatSaber.Server.Extensions;
-using BetterBeatSaber.Server.Interfaces;
 using BetterBeatSaber.Server.Services.Interfaces;
 using BetterBeatSaber.Shared.Models;
 

@@ -32,7 +32,7 @@ public sealed class TwitchController : Controller {
         if (player.Role < PlayerRole.Supporter)
             return Forbid();
 
-        var ssml = _tokenService.VerifyTokenWithCustomData(token, TokenType.TwitchTTS);
+        var ssml = _tokenService.VerifyTokenWithCustomData(token, TokenType.TwitchTextToSpeech);
         if (ssml == null)
             return Forbid();
             

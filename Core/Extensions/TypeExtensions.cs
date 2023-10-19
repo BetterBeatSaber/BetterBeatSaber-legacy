@@ -71,6 +71,46 @@ public static class TypeExtensions {
 
     public static T? GetInstance<T>(this Type type) =>
         GetPropertyValue<T>(type, "Instance", bindingFlags: BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+
+    public static bool AddEventHandler<T>(this Type? type, string eventName, string eventHandlerMethodName, T? instance = default, object? publisher = null) {
+
+        if (type == null)
+            return false;
+
+        var eventHandler = type.GetMethod(eventHandlerMethodName, DefaultBindingFlags);
+        if(eventHandler == null)
+            return false;
+        
+        var @event = type.GetEvent(eventName, DefaultBindingFlags);
+        if (@event == null)
+            return false;
+        
+        var @delegate = Delegate.CreateDelegate(@event.EventHandlerType, instance, eventHandler);
+
+        @event.AddEventHandler(publisher, @delegate);
+        
+        return true;
+
+    }
+
+    public static bool RemoveEventHandler<T>(this Type? type, string eventName, MethodInfo eventHandler, T? instance = default, object? publisher = null) {
+        
+        if (type == null)
+            return false;
+        
+        var @event = type.GetEvent(eventName, DefaultBindingFlags);
+        if (@event == null)
+            return false;
+        
+        var @delegate = Delegate.CreateDelegate(@event.EventHandlerType, instance, eventHandler);
+
+        @event.RemoveEventHandler(publisher, @delegate);
+        
+        @event.AddEventHandler(publisher, @delegate);
+        
+        return true;
+        
+    }
     
     #endregion
     
@@ -86,13 +126,18 @@ public static class TypeExtensions {
     }
     
     public static string ReadViewDefinition(this Type type) {
+        
         if (Cache.TryGetValue(type, out var definition) && definition != null)
             return definition;
+        
         definition = ReadViewDefinitionFromResource(type);
+        
         #if !DEBUG
         Cache[type] = definition;
         #endif
+        
         return definition;
+        
     }
     
     public static string ReadViewDefinitionFromResource(Type type) {

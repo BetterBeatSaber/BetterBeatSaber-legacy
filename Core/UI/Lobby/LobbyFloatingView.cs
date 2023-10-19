@@ -30,10 +30,11 @@ public sealed class LobbyFloatingView : View<LobbyFloatingView>, View.IPostParse
         _playerListData = new PlayerListData(PlayerList);
         
         LobbyManager.Instance.OnLobbyPlayerActionReceived += OnLobbyPlayerActionReceived;
-        
+
     }
 
-    protected override void OnDeactivate() {
+    // todo: ...
+    public void OnDeactivate(bool removedFromHierarchy, bool screenSystemDisabling) {
         LobbyManager.Instance.OnLobbyPlayerActionReceived -= OnLobbyPlayerActionReceived;
     }
 

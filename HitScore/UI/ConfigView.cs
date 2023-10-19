@@ -1,13 +1,9 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
-
-using BetterBeatSaber.Core.UI;
+﻿using BetterBeatSaber.Core.UI;
 using BetterBeatSaber.HitScore.Config;
 
 namespace BetterBeatSaber.HitScore.UI;
 
-#if DEBUG
-[HotReload(RelativePathToLayout = "./ConfigView.bsml")]
-#endif
+// ReSharper disable UnusedMember.Global
 public sealed class ConfigView : View<ConfigView> {
 
     public bool Enable {

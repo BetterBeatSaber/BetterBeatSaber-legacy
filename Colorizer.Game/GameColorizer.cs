@@ -5,7 +5,7 @@ using BetterBeatSaber.Colorizer.Game.Config;
 using BetterBeatSaber.Colorizer.Game.Installer;
 using BetterBeatSaber.Colorizer.Game.UI;
 using BetterBeatSaber.Colorizer.Game.Utilities;
-using BetterBeatSaber.Core.Threading;
+using BetterBeatSaber.Core.Utilities;
 using BetterBeatSaber.Core.Zenject;
 
 using UnityEngine;

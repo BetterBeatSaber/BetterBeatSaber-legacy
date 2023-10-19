@@ -12,19 +12,13 @@ public sealed class HitScore : Module {
     }
 
     public override void Enable() {
-        
         RegisterView<ConfigView>();
-        
         Patch();
-        
     }
 
     public override void Disable() {
-        
         UnregisterView();
-        
         Unpatch();
-        
     }
 
 }

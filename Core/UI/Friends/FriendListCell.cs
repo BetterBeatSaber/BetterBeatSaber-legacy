@@ -1,12 +1,9 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
-
 using BetterBeatSaber.Core.Extensions;
-using BetterBeatSaber.Core.Manager;
 using BetterBeatSaber.Core.TextMeshPro;
 using BetterBeatSaber.Core.UI.Components;
 using BetterBeatSaber.Shared.Enums;
 using BetterBeatSaber.Shared.Models;
-using BetterBeatSaber.Shared.Network.Interfaces;
 
 using JetBrains.Annotations;
 
@@ -37,11 +34,11 @@ public sealed class FriendListCell : ListCell<Player> {
         
         Avatar.SetPlayer(player);
         
-        UpdateStatus(FriendManager.Instance.GetFriendPresence(player), FriendManager.Instance.GetFriendLobby(player));
+        UpdateStatus(player.GetPresence(), player.GetLobby());
         
     }
 
-    public void UpdateStatus(IPresence? presence, ILobby? lobby) =>
+    public void UpdateStatus(IPresence? presence, Shared.Models.Lobby? lobby) =>
         Status.text = presence.GetStatusText(lobby);
 
 }

@@ -16,9 +16,8 @@ public static class HttpExtensions {
 
     #region Client
 
-    public static async Task<T?> GetJsonAsync<T>(this HttpClient httpClient, string url, JsonSerializerSettings? serializerSettings = null) {
-        return JsonConvert.DeserializeObject<T>(await httpClient.GetStringAsync(url), serializerSettings ?? DefaultJsonSerializerSettings);
-    }
+    public static async Task<T?> GetJsonAsync<T>(this HttpClient httpClient, string url, JsonSerializerSettings? serializerSettings = null) =>
+        JsonConvert.DeserializeObject<T>(await httpClient.GetStringAsync(url), serializerSettings ?? DefaultJsonSerializerSettings);
 
     #endregion
 

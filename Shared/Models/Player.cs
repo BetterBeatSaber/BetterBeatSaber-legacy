@@ -15,7 +15,6 @@ public struct Player : INetSerializable, IEquatable<Player> {
     public string AvatarUrl { get; set; }
     public PlayerRole Role { get; set; }
     public PlayerFlag Flags { get; set; }
-    public byte Rank { get; set; }
     public Leaderboard? ScoreSaber { get; set; }
     public Leaderboard? BeatLeader { get; set; }
 
@@ -26,7 +25,6 @@ public struct Player : INetSerializable, IEquatable<Player> {
         writer.Put(AvatarUrl);
         writer.Put((byte) Role);
         writer.Put((ushort) Flags);
-        writer.Put(Rank);
         
         if (ScoreSaber != null) {
             writer.Put(true);
@@ -48,7 +46,6 @@ public struct Player : INetSerializable, IEquatable<Player> {
         AvatarUrl = reader.GetString();
         Role = (PlayerRole) reader.GetByte();
         Flags = (PlayerFlag) reader.GetUShort();
-        Rank = reader.GetByte();
 
         if (reader.GetBool())
             ScoreSaber = reader.Get<Leaderboard>();

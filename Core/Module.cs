@@ -1,14 +1,12 @@
 ﻿using System;
 
 using BetterBeatSaber.Core.Config;
-using BetterBeatSaber.Core.Manager.Service;
 using BetterBeatSaber.Core.UI;
+using BetterBeatSaber.Core.Utilities;
 using BetterBeatSaber.Core.Zenject;
 using BetterBeatSaber.Shared.Models;
 
 using HarmonyLib;
-
-using IPA.Logging;
 
 using JetBrains.Annotations;
 
@@ -24,7 +22,7 @@ public abstract class Module : Interfaces.IInitializable, Interfaces.IEnableable
     
     // Will be injected
     [UsedImplicitly]
-    public readonly Logger Logger = null!;
+    public readonly BetterLogger Logger = null!;
 
     [UsedImplicitly]
     public readonly bool IsLocal;
@@ -62,22 +60,6 @@ public abstract class Module : Interfaces.IInitializable, Interfaces.IEnableable
 
     #endregion
     
-    #region Services
-
-    protected void RegisterService<T>() where T : Service {
-        ServiceManager.Instance.RegisterService<T>();
-    }
-
-    protected void UnregisterService<T>() where T : Service {
-        ServiceManager.Instance.UnregisterService<T>();
-    }
-    
-    protected void AcquireService<T>() where T : Service {
-        ServiceManager.Instance.AcquireService<T>();
-    }
-
-    #endregion
-
     #region UI
 
     protected void RegisterModifierView<T>() where T : ModifierView {
@@ -152,5 +134,15 @@ public abstract class Module : Interfaces.IInitializable, Interfaces.IEnableable
     }
 
     #endregion
+
+}
+
+public abstract class Module<T> : Module where T : Module<T> {
+
+    public static T Instance { get; private set; } = null!;
+
+    protected Module() {
+        Instance = (T) this;
+    }
 
 }

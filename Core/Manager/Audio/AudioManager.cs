@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-using BetterBeatSaber.Core.Network;
 using BetterBeatSaber.Core.Utilities;
 
 using UnityEngine;
@@ -36,9 +35,6 @@ public sealed class AudioManager : UnitySingleton<AudioManager> {
         _audioSource = gameObject.AddComponent<AudioSource>();
         _audioSource.volume = 1f;
      
-        NetworkClient.Instance.OnConnected += () => PlayAudio(Audio.Connected);
-        NetworkClient.Instance.OnDisconnected += () => PlayAudio(Audio.Disconnected);
-        
         _coroutine = StartCoroutine(Run());
 
     }

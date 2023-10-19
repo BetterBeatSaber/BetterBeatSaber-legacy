@@ -141,38 +141,12 @@ public sealed class LeftView : View<LeftView> {
 
     #endregion
     
-    private CachedListData<IntegrationType, IntegrationCell>? _integrationList;
-    
     #region UI Actions
 
     [UIAction(PostParseEvent)]
     // ReSharper disable once UnusedMember.Local
     private void PostParse() {
-        
-        _integrationList = new CachedListData<IntegrationType, IntegrationCell>(IntegrationList) {
-            Items = new List<IntegrationType> {
-                IntegrationType.Discord,
-                IntegrationType.Patreon,
-                IntegrationType.Twitch
-            }
-        };
-        
-        IntegrationManager.Instance.OnIntegrationUpdated += OnIntegrationUpdated;
-        
         InvokeRepeating(nameof(UpdateNetworkInformation), .5f, .5f);
-
-    }
-
-    private void OnIntegrationUpdated(IntegrationType type, Integration? integration) {
-
-        if (_integrationList == null)
-            return;
-        
-        if (!_integrationList.Cache.TryGetValue(type, out var cell))
-            return;
-        
-        cell.Populate(type);
-        
     }
 
     [UIAction(nameof(DeleteAccount))]
@@ -181,7 +155,7 @@ public sealed class LeftView : View<LeftView> {
 
             DeleteButton.interactable = false;
             
-            ApiClient.Instance.DeleteRaw("/players/me").ContinueWith(task => {
+            ApiClient.Instance.DeleteRaw("/players").ContinueWith(task => {
                 if (task.IsCompleted && task.Result is { IsSuccessStatusCode: true })
                     Application.Quit();
             });

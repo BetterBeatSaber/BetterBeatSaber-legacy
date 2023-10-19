@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 using BeatSaberMarkupLanguage;
 
@@ -8,11 +9,9 @@ using BetterBeatSaber.Core.Game;
 using BetterBeatSaber.Core.Manager;
 using BetterBeatSaber.Core.Manager.Audio;
 using BetterBeatSaber.Core.Manager.Interop;
-using BetterBeatSaber.Core.Manager.Service;
 using BetterBeatSaber.Core.Network;
 using BetterBeatSaber.Core.Patches;
 using BetterBeatSaber.Core.Provider;
-using BetterBeatSaber.Core.Threading;
 using BetterBeatSaber.Core.UI;
 using BetterBeatSaber.Core.UI.BSML;
 using BetterBeatSaber.Core.UI.Components;
@@ -23,7 +22,6 @@ using BetterBeatSaber.Core.Zenject;
 using HarmonyLib;
 
 using UnityEngine;
-using UnityEngine.Analytics;
 
 using Location = BetterBeatSaber.Core.Zenject.Location;
 using Logger = IPA.Logging.Logger;
@@ -37,41 +35,18 @@ public sealed class BetterBeatSaber : Singleton<BetterBeatSaber> {
 
     public static readonly Version Version = new("2.1.2-dev.2");
     
-    public static Logger Logger { get; private set; } = null!;
+    public static BetterLogger Logger { get; private set; } = null!;
 
     internal static readonly Harmony Harmony = new("betterbs.xyz");
 
     public BetterBeatSaber(Logger logger) {
-        Logger = logger;
+        Logger = new BetterLogger(logger);
     }
     
     #region Init, Start & Exit
 
-    private bool _failed;
-    
     public void Init() {
 
-        #region Privacy (Cause it's important!!!)
-
-        Analytics.initializeOnStartup = false;
-        Analytics.enabled = false;
-        Analytics.limitUserTracking = true;
-        Analytics.deviceStatsEnabled = false;
-
-        PerformanceReporting.enabled = false;
-
-        #endregion
-        
-        try {
-            AsyncHelper.RunSync(AuthManager.Instance.Authenticate);
-        } catch (Exception exception) {
-            _failed = true;
-            Logger.Error("Failed to authenticate: " + exception.Message);
-            return;
-        }
-        
-        Harmony.PatchAll();
-        
         ZenjectManager.Instance.OnInstall += (location, container) => {
             
             if(location.IsPlayer() || location.HasFlag(Location.Menu))
@@ -89,15 +64,14 @@ public sealed class BetterBeatSaber : Singleton<BetterBeatSaber> {
 
         };
         
-        ThreadDispatcher.Instance.Begin();
+        ThreadDispatcher.Instance.Init();
+        
+        Harmony.PatchAll();
 
     }
 
     public void Start() {
 
-        if (_failed)
-            return;
-        
         RGB.Instantiate();
 
         MenuButtonsViewControllerDidActivatePatch.Patch(Harmony);
@@ -106,7 +80,7 @@ public sealed class BetterBeatSaber : Singleton<BetterBeatSaber> {
         BSMLParser.instance.RegisterTag(new AvatarComponent.Tag());
         
         #if DEBUG
-        if(BeatSaber.EnableDeveloperMode)
+        if(Environment.GetCommandLineArgs().Contains("--explorer"))
             UnityExplorer.ExplorerStandalone.CreateInstance();
         #endif
 
@@ -114,6 +88,8 @@ public sealed class BetterBeatSaber : Singleton<BetterBeatSaber> {
         
         #region Manager
 
+        AuthManager.Instance.Init();
+        
         ConfigManager.Instance.Init();
         
         ConfigManager.Instance.CreateConfig<CoreConfig>("core");
@@ -123,12 +99,12 @@ public sealed class BetterBeatSaber : Singleton<BetterBeatSaber> {
         ZenjectManager.Instance.Init();
         AssetManager.Instance.Init();
         UIManager.Instance.Init();
-        ServiceManager.Instance.Init();
         PlayerManager.Instance.Init();
         ModuleManager.Instance.Init();
         FriendManager.Instance.Init();
         MapManager.Instance.Init();
         InteropManager.Instance.Init();
+        BackupManager.Instance.Init();
 
         AudioManager.Instantiate();
         PresenceManager.Instantiate();
@@ -141,17 +117,13 @@ public sealed class BetterBeatSaber : Singleton<BetterBeatSaber> {
         ZenjectManager.Instance.Expose<AudioTimeSyncController>();
         ZenjectManager.Instance.Expose<PauseController>();
         ZenjectManager.Instance.Expose<FireworksController>();
+        
         #endregion
         
     }
 
     public void Exit() {
-        
-        if (_failed)
-            return;
-        
         CoreConfig.Instance.Save();
-        
     }
     
     #endregion
@@ -160,19 +132,13 @@ public sealed class BetterBeatSaber : Singleton<BetterBeatSaber> {
 
     public void Enable() {
         
-        if (_failed)
-            return;
-        
         ModuleManager.Instance.Enable();
-        ServiceManager.Instance.Enable();
         
         MainFlowController.Initialize();
         
     }
 
     public void Disable() {
-        if (_failed)
-            return;
     }
 
     #endregion

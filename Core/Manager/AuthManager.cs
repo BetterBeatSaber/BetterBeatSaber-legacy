@@ -1,72 +1,71 @@
 ﻿using System;
-using System.Net.Http;
+using System.Collections;
 using System.Net.Http.Headers;
-using System.Security.Authentication;
 using System.Text;
-using System.Threading.Tasks;
 
 using BetterBeatSaber.Core.Api;
-using BetterBeatSaber.Core.Extensions;
 using BetterBeatSaber.Core.Network;
+using BetterBeatSaber.Core.Utilities;
 using BetterBeatSaber.Shared.Models;
 using BetterBeatSaber.Shared.Responses;
 
-using Steamworks;
+using UnityEngine;
 
 namespace BetterBeatSaber.Core.Manager; 
 
 internal sealed class AuthManager : Manager<AuthManager> {
 
-    internal string Token { get; private set; } = null!;
+    internal string? Token { get; private set; }
 
-    public Player CurrentPlayer { get; private set; }
-    
-    internal async Task Authenticate() {
-        
-        #region Steam Ticket
+    public Player? CurrentPlayer { get; private set; }
 
-        if (!SteamAPI.IsSteamRunning() || !SteamAPI.Init())
-            throw new Exception("Steam not running or not initialized");
+    public bool IsAuthenticated => Token != null;
+
+    public event Action<string>? OnAuthenticationFailed;
+    public event Action? OnAuthenticated;
+
+    public override void Init() =>
+        ThreadDispatcher.Enqueue(Authenticate());
+
+    private IEnumerator Authenticate() {
         
-        var ticketRaw = new byte[1024];
-        if (SteamUser.GetAuthSessionTicket(ticketRaw, ticketRaw.Length, out var ticketSize) == HAuthTicket.Invalid)
-            throw new Exception("Failed to retrieve Steam ticket");
+        yield return new WaitUntil(() => SteamManager.Initialized);
+
+        var ticketTask = new SteamPlatformUserModel().GetUserAuthToken();
+        yield return new WaitUntil(() => ticketTask.IsCompleted);
+
+        var request = new ApiRequest<AuthResponse>("/auth", "POST") {
+            BodyRaw = Encoding.UTF8.GetBytes(ticketTask.Result.token ?? string.Empty)
+        };
         
-        var flag = false;
-        for (uint index = 0; index < ticketSize; index++) {
-            if (ticketRaw[(int) index] == 0)
-                continue;
-            flag = true;
-            break;
+        yield return request.Send();
+
+        if (request.Failed) {
+            OnAuthenticationFailed?.Invoke(request.Error);
+            Logger.Warn("Authentication failed: {0}", request.Error);
+            yield break;
+        }
+
+        if (request.Response == null) {
+            OnAuthenticationFailed?.Invoke("Failed to parse response");
+            Logger.Warn("Failed to parse response");
+            yield break;
         }
         
-        var ticket = flag ? BitConverter.ToString(ticketRaw, 0, (int) ticketSize).Replace("-", "") : null;
-        if (ticket == null || string.IsNullOrEmpty(ticket))
-            throw new Exception("Steam ticket is invalid");
+        Token = request.Response.Token;
         
-        #endregion
+        ApiClient.Instance.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", request.Response.Token);
 
-        var response = await ApiClient.Instance.PostRaw("/auth", new StringContent(ticket, Encoding.UTF8, "text/plain"));
-        if (response == null)
-            throw new AuthenticationException("Failed to authenticate");
-
-        if (!response.IsSuccessStatusCode)
-            throw new AuthenticationException($"Failed to authenticate: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}");
+        CurrentPlayer = request.Response.Player;
         
-        var authResponse = await response.Content.ReadAsJsonAsync<AuthResponse>();
-        if (authResponse == null)
-            throw new AuthenticationException("Failed to authenticate");
+        NetworkClient.Ip = request.Response.Ip;
+        NetworkClient.Port = request.Response.Port;
+        NetworkClient.Key = request.Response.Key;
         
-        Token = authResponse.Token;
+        OnAuthenticated?.Invoke();
         
-        ApiClient.Instance.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.Token);
-
-        CurrentPlayer = authResponse.Player;
+        Logger.Info("Authenticated as {0}", request.Response.Player.Name);
         
-        NetworkClient.Ip = authResponse.Ip;
-        NetworkClient.Port = authResponse.Port;
-        NetworkClient.Key = authResponse.Key;
-
     }
     
 }

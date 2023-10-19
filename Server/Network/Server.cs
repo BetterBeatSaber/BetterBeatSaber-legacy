@@ -146,12 +146,10 @@ public sealed class Server : LifetimeService<Server>, IServer {
         
         connection.SendPacketToFriends(new PresencePacket {
             Player = connection.Player.ToSharedModel(),
-            Presence = new OfflinePresence()
+            Presence = new Presence.Offline()
         });
 
         Connections.Remove(connection);
-
-        connection.Dispose();
 
     }
 
@@ -162,45 +160,61 @@ public sealed class Server : LifetimeService<Server>, IServer {
     private async Task OnAuthPacketReceived(AuthPacket packet, Connection connection) {
         
         using var scope = ScopeFactory.CreateScope();
-            
+        
         var playerService = scope.ServiceProvider.GetRequiredService<IPlayerService>();
         var tokenService = scope.ServiceProvider.GetRequiredService<ITokenService>();
         
         var player = await tokenService.GetPlayerFromToken(packet.Session, TokenType.Session);
         if (player is null) {
+            
+            connection.SendPacket(new AuthResponsePacket {
+                ServerName = _options.Name,
+                Success = false,
+                Reason = "Invalid Session"
+            });
+            
             connection.Disconnect();
+            
+            Logger.LogWarning("Authentication failed from {EndPoint} with: {Session}", connection.Peer.EndPoint, packet.Session);
+            
             return;
         }
             
         connection.Player = player;
         connection.Friends = await playerService.GetFriends(player);
         
-        connection.SendPacket(new ServerInfoPacket {
-            ServerName = _options.Name
+        connection.SendPacket(new AuthResponsePacket {
+            ServerName = _options.Name,
+            Success = true
         });
-
+        
         foreach (var friendConnection in connection.FriendConnections) {
             
             connection.SendPacket(new PresencePacket {
                 Player = friendConnection.Player.ToSharedModel(),
                 Presence = friendConnection.Presence
             });
-            
-            /*connection.SendPacket(new LobbyPacket {
-                Player = friendConnection.Player.ToSharedModel(),
-                Lobby = friendConnection.Lobby
-            });*/
-            
+
             friendConnection.SendPacket(new PresencePacket {
                 Player = player.ToSharedModel(),
-                Presence = new InMenuPresence()
+                Presence = new Presence.InMenu()
             });
+            
+            /*if (friendConnection.Lobby != null) {
+                connection.SendPacket(new LobbyPacket {
+                    Player = friendConnection.Player.ToSharedModel(),
+                    Lobby = friendConnection.Lobby
+                });
+            }*/
             
         }
         
     }
 
     private static void OnPresencePacketReceived(PresencePacket packet, Connection connection) {
+
+        if (!connection.IsAuthenticated)
+            return;
         
         connection.Presence = packet.Presence;
         
@@ -211,6 +225,9 @@ public sealed class Server : LifetimeService<Server>, IServer {
     }
     
     private static void OnPresenceStatePacketReceived(PresenceStatePacket packet, Connection connection) {
+        
+        if (!connection.IsAuthenticated)
+            return;
         
         connection.PresenceState = packet.PresenceState;
         
@@ -231,6 +248,9 @@ public sealed class Server : LifetimeService<Server>, IServer {
     }*/
     
     private async void OnInitializeTwitchPacketReceived(InitializePacket packet, Connection connection) {
+
+        if (!connection.IsAuthenticated || connection.Player.Role < PlayerRole.Supporter)
+            return;
         
         using var scope = ScopeFactory.CreateScope();
 
@@ -282,12 +302,9 @@ public sealed class Server : LifetimeService<Server>, IServer {
 
     #endregion
     
-    public void Dispose() {
-    }
-
     #pragma warning disable CS8618
     
-    public partial class ServerOptions  {
+    public class ServerOptions  {
 
         public string Name { get; set; }
         public string Ip { get; set; }

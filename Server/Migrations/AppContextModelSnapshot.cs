@@ -16,8 +16,28 @@ namespace BetterBeatSaber.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.3")
+                .HasAnnotation("ProductVersion", "7.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("BetterBeatSaber.Server.Models.Ban", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<ulong?>("BeatSaverId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<ulong?>("DiscordId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<ulong?>("SteamId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bans");
+                });
 
             modelBuilder.Entity("BetterBeatSaber.Server.Models.Player", b =>
                 {
@@ -43,9 +63,6 @@ namespace BetterBeatSaber.Server.Migrations
 
                     b.Property<ushort>("Flags")
                         .HasColumnType("smallint unsigned");
-
-                    b.Property<bool>("IsBanned")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime(6)");

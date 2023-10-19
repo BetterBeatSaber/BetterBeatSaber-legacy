@@ -1,14 +1,12 @@
 ﻿using BetterBeatSaber.Core.Interfaces;
 using BetterBeatSaber.Core.Utilities;
 
-using IPA.Logging;
-
 namespace BetterBeatSaber.Core.Manager; 
 
 public abstract class Manager<T> : ConstructableSingleton<T>, IInitializable, IEnableable where T : Manager<T> {
 
-    private Logger? _logger;
-    protected Logger Logger => _logger ??= BetterBeatSaber.Logger.GetChildLogger(GetType().Name);
+    private BetterLogger? _logger;
+    protected BetterLogger Logger => _logger ??= BetterBeatSaber.Logger.GetChildLogger(GetType().Name);
 
     #region Init & Exit
 

@@ -85,7 +85,7 @@ public sealed class FriendsScreen : FloatingView<FriendsScreen> {
         
     }
 
-    private void OnFriendStatusUpdated(Player player, IPresence? presence, ILobby? lobby) {
+    private void OnFriendStatusUpdated(Player player, IPresence? presence) {
 
         if (_cachedTableData == null)
             return;
@@ -93,7 +93,7 @@ public sealed class FriendsScreen : FloatingView<FriendsScreen> {
         if (!_cachedTableData.Cache.TryGetValue(player, out var cell))
             return;
         
-        cell.UpdateStatus(presence, lobby);
+        cell.UpdateStatus(presence, player.GetLobby());
         
     }
 

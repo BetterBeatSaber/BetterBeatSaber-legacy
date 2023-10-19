@@ -2,8 +2,6 @@
 
 public enum Audio {
 
-    Loaded,
-    Connected,
-    Disconnected
+    Loaded
 
 }

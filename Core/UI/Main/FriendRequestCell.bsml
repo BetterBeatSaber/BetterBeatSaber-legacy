@@ -1,7 +1,12 @@
 ﻿<vertical bg='round-rect-panel' horizontal-fit='Unconstrained' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
     <horizontal pad-left='4' pad-right='2'>
+        <vertical pref-width='12'>
+            <avatar id='Avatar' pref-width='11' pref-height='11' />
+        </vertical>
         <text id='Name' />
-        <action-button id='AcceptButton' text='Accept' on-click='AcceptRequest' />
-        <button id='DeclineButton' text='Decline' on-click='DeclineRequest' />
+        <vertical>
+            <action-button id='AcceptButton' text='Accept' on-click='AcceptRequest' />
+            <button id='DeclineButton' text='Decline' on-click='DeclineRequest' />
+        </vertical>
     </horizontal>
 </vertical>

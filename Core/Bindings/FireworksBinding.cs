@@ -28,8 +28,8 @@ public sealed class FireworksBinding : IInitializable, IDisposable {
     
     public void Initialize() {
 
-        _originalFireCoroutineMethod = typeof(FireworkItemController).GetMethod(nameof(FireworkItemController.FireCoroutine), BindingFlags.Public | BindingFlags.Instance);
-        _originalAwakeMethod = typeof(FireworkItemController).GetMethod(nameof(FireworkItemController.Awake), BindingFlags.Public | BindingFlags.Instance);
+        _originalFireCoroutineMethod = typeof(FireworkItemController).GetMethod("FireCoroutine", BindingFlags.Public | BindingFlags.Instance);
+        _originalAwakeMethod = typeof(FireworkItemController).GetMethod("Awake", BindingFlags.Public | BindingFlags.Instance);
         
         BetterBeatSaber.Harmony.Patch(_originalFireCoroutineMethod, new HarmonyMethod(typeof(FireworksBinding).GetMethod(nameof(FireCoroutinePrefix), BindingFlags.NonPublic | BindingFlags.Static)));
         BetterBeatSaber.Harmony.Patch(_originalAwakeMethod, postfix: new HarmonyMethod(typeof(FireworksBinding).GetMethod(nameof(AwakePostfix), BindingFlags.NonPublic | BindingFlags.Static)));

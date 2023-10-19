@@ -16,7 +16,6 @@ What you have to have installed:
 And also these Libs/Plugins installed:
 - BeatSaberMarkupLanguage
 - SongCore
-- SongDetailsCache
 
 And other requirements:
 - An MySQL Server

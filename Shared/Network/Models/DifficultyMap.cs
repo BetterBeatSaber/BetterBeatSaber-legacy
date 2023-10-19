@@ -8,6 +8,7 @@ namespace BetterBeatSaber.Shared.Models;
 public struct DifficultyMap : INetSerializable {
 
     public MapType MapType { get; set; }
+    
     public MapDifficulty Difficulty { get; set; }
     
     public float NotesPerSecond { get; set; }

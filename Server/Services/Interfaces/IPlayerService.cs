@@ -15,7 +15,7 @@ public interface IPlayerService {
     
     public Task<Player?> GetById(ulong platformId);
 
-    public Task<List<Player>> Search(string? name, int page, int count, bool banned);
+    public Task<List<Player>> Search(string? name, int page, int count);
 
     public Task<bool> DeletePlayer(Player player);
     

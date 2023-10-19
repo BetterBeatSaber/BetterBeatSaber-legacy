@@ -3,8 +3,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
 
-using BetterBeatSaber.Server.Discord;
-using BetterBeatSaber.Server.Discord.Interfaces;
 using BetterBeatSaber.Server.Integrations;
 using BetterBeatSaber.Server.Interfaces;
 using BetterBeatSaber.Server.Jobs;
@@ -15,6 +13,7 @@ using BetterBeatSaber.Server.Network;
 using BetterBeatSaber.Server.Network.Interfaces;
 using BetterBeatSaber.Server.Services;
 using BetterBeatSaber.Server.Services.Interfaces;
+using BetterBeatSaber.Server.Steam;
 using BetterBeatSaber.Server.Twitch;
 using BetterBeatSaber.Server.Twitch.Interfaces;
 
@@ -84,9 +83,7 @@ var steamWebInterfaceFactory = new SteamWebInterfaceFactory(builder.Configuratio
 builder.Services
        .AddSwaggerGen()
        .AddHttpClient()
-       .AddDbContext<AppContext>(contextOptions => contextOptions.UseMySQL(builder.Configuration.GetConnectionString("Default")!, options => {
-           options.EnableRetryOnFailure(2);
-       }))
+       .AddDbContext<AppContext>(options => options.UseMySQL(builder.Configuration.GetConnectionString("Default")!, optionsBuilder => optionsBuilder.EnableRetryOnFailure(3)))
        .AddServerTiming()
        .AddRateLimiter(options => {
 
@@ -116,21 +113,24 @@ builder.Services
        .AddSingleton<ISteamUserAuth, SteamUserAuth>(_ => steamWebInterfaceFactory.CreateSteamWebInterface<SteamUserAuth>())
        .AddSingleton<ISteamUser, SteamUser>(_ => steamWebInterfaceFactory.CreateSteamWebInterface<SteamUser>())
 
+       .AddSingleton<ISteamService, SteamService>()
+       
        .AddSingleton<IGitHubClient, GitHubClient>(serviceProvider => new GitHubClient(new ProductHeaderValue("BetterBeatSaber")) {
            Credentials = new Credentials(serviceProvider.GetService<IConfiguration>()?.GetValue<string>("GithubToken"))
        })
        .AddSingleton<IGithubService, GithubService>()
-
+       
+       .AddSingleton<IMapService, MapService>()
        .AddScoped<IJwtService, JwtService>()
        .AddScoped<ITokenService, TokenService>()
        .AddScoped<IAzureService, AzureService>()
        .AddScoped<IConfigService, ConfigService>()
+       .AddScoped<IBanService, BanService>()
 
        .Configure<Server.ServerOptions>(builder.Configuration.GetSection("Server"))
        .AddSingleton<IServer, Server>()
 
        .AddSingleton<ITwitchService, TwitchService>()
-       .AddSingleton<IDiscordService, DiscordService>()
 
        .AddSingleton<DiscordIntegration>()
        .AddSingleton<PatreonIntegration>()
@@ -139,6 +139,7 @@ builder.Services
        .AddSingleton<IBaseLeaderboardClient, ScoreSaberClient>()
        .AddSingleton<IBaseLeaderboardClient, BeatLeaderClient>()
 
+       .AddHostedService<GenerateMapCacheJob>()
        .AddHostedService<UpdateLeaderboardJob>()
        .AddHostedService<RefreshAccessTokensJob>()
 
@@ -184,7 +185,7 @@ if(!app.Environment.IsDevelopment())
     app.Use(async (httpContext, next) => {
         var playerId = httpContext.User.FindFirstValue(TokenService.JwtIdClaimName);
         if (playerId != null) {
-            SentrySdk.ConfigureScope(scope => scope.User = new Sentry.User {
+            SentrySdk.ConfigureScope(s => s.User = new Sentry.User {
                 Id = playerId
             });
         }

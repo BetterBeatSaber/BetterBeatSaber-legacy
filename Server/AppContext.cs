@@ -11,7 +11,7 @@ namespace BetterBeatSaber.Server;
 public sealed class AppContext : DbContext {
 
     public AppContext(DbContextOptions options) : base(options) { }
-
+    
     [UsedImplicitly]
     public DbSet<Player> Players { get; set; }
     
@@ -20,5 +20,8 @@ public sealed class AppContext : DbContext {
  
     [UsedImplicitly]
     public DbSet<PlayerRelationship> PlayerRelationships { get; set; }
+ 
+    [UsedImplicitly]
+    public DbSet<Ban> Bans { get; set; }
     
 }

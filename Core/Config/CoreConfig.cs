@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+using BetterBeatSaber.Core.Backup;
 using BetterBeatSaber.Core.UI;
 
 namespace BetterBeatSaber.Core.Config; 
@@ -13,5 +14,9 @@ public sealed class CoreConfig : Config<CoreConfig> {
     public bool CustomTitle { get; set; } = true;
     
     public FloatingViewConfigBase FriendScreen { get; set; } = new();
+
+    public BackupConfig Backups { get; set; } = new();
+
+    public bool ConfigCloudSynchronization { get; set; } = true;
 
 }
